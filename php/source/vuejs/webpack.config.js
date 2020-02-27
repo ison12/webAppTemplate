@@ -1,0 +1,42 @@
+// webpack.config.js
+const path = require('path');
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
+
+module.exports = {
+    mode: 'development',
+    entry: path.resolve(__dirname, 'src', 'main.js'),
+    output: {
+        path: path.resolve(__dirname, 'public', 'dist'),
+        filename: 'bundle.js'
+    },
+    module: {
+        rules: [
+            {
+                test: /\.vue$/,
+                loader: 'vue-loader'
+            },
+            // this will apply to both plain `.js` files
+            // AND `<script>` blocks in `.vue` files
+            {
+                test: /\.js$/,
+                loader: 'babel-loader'
+            },
+            // this will apply to both plain `.css` files
+            // AND `<style>` blocks in `.vue` files
+            {
+                test: /\.css$/,
+                use: [
+                    'vue-style-loader',
+                    'css-loader'
+                ]
+            }
+        ]
+    },
+    // Configuration for dev server
+    devServer: {
+        writeToDisk: true
+    },
+    plugins: [
+        new VueLoaderPlugin()
+    ]
+};

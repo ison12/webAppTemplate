@@ -1,0 +1,10 @@
+<div>
+    <div v-if="componentId !== null">
+        <p>
+        <component :is="componentId"></component>
+        </p>
+    </div>
+    <div v-else>
+        <p>コンポーネント未読み込み</p>
+    </div>
+</div>
