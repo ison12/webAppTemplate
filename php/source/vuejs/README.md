@@ -77,6 +77,6 @@ App.vue
 
 
 # 参考ページなど
-https://jp.vuejs.org/v2/guide/single-file-components.html
-https://vue-loader.vuejs.org/
-https://webpack.js.org/
+* https://jp.vuejs.org/v2/guide/single-file-components.html
+* https://vue-loader.vuejs.org/
+* https://webpack.js.org/
