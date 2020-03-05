@@ -1,0 +1,56 @@
+<div class="login-component"
+     v-cloak>
+
+    <form class="form-signin">
+
+        <div class="card">
+
+            <div class="card-header">
+                <h3 class="text-muted mt-2 mb-2 text-center">{{AppContext.name}} <img v-bind:src="AppContext.baseUrl + '/assets/img/logo.png'" height="31"></h3>
+            </div>
+
+            <div class="card-body">
+
+                <error-list-component :errors="errorsOnBoard"></error-list-component>
+
+                <div class="form-group">
+                    <label class="text-muted">アカウント <span class="small">（EMailを入力）</span></label>
+                    <input type="text"
+                           name="user_account"
+                           class="form-control"
+                           v-model="data.user_account">
+                    <input-error-view-component class="form-control-plaintext" :selector="'[name=user_account]'" :messageInfo="getError('user_account')"></input-error-view-component>
+                </div>
+
+                <div class="form-group">
+                    <label class="text-muted">パスワード</label>
+                    <input type="password"
+                           name="password"
+                           class="form-control"
+                           v-model="data.password">
+                    <input-error-view-component class="form-control-plaintext" :selector="'[name=password]'" :messageInfo="getError('password')"></input-error-view-component>
+                </div>
+
+                <div class="form-group mt-3">
+                    <button type="submit"
+                            class="btn btn-primary btn-block"
+                            v-on:click.prevent.stop="onExec">
+                        <span class="oi oi-account-login"></span> ログイン
+                    </button>
+                </div>
+
+                <div class="form-group">
+                    <a class="btn btn-link btn-block"
+                       v-bind:href="AppContext.baseUrl + '/password/changeRequest?user_account=' + castString(data.user_account)"
+                       v-on:click="">
+                        <span class="oi oi-key"></span> パスワードを忘れた方はこちら
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>

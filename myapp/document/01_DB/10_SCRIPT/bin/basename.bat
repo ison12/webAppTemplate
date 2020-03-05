@@ -1,0 +1,1 @@
+set FILE_NAME_WITHOUT_EXT=%~n1

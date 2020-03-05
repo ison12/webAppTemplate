@@ -1,0 +1,55 @@
+<div class="app-header-component" v-cloak ref="view">
+
+    <nav class="navbar navbar-expand navbar-light bg-light fixed-top">
+
+        <a class="navbar-brand" 
+           v-bind:href="($store.getters.loginUser && $store.getters.loginUser.user_account) ? AppContext.baseUrl + '/top' : AppContext.baseUrl + '/login'">{{AppContext.name}} <img v-bind:src="AppContext.baseUrl + '/assets/img/logo.png'" height="31"></a>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto" v-if="$store.getters.loginUser && $store.getters.loginUser.user_account">
+
+                <li class="nav-item dropdown">
+
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="oi oi-cog"></span> 設定
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item"
+                           v-bind:href="AppContext.baseUrl + '/systemSetting/search'"><span class="oi oi-cog"></span> システム設定</a>
+                    </div>
+                </li>
+
+                <li class="nav-item dropdown">
+
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="oi oi-bug"></span> システム管理
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item"
+                           v-bind:href="AppContext.baseUrl + '/debug/phpInfo'"><span class="oi oi-info"></span> PHP情報</a>
+                        <a class="dropdown-item"
+                           v-bind:href="'#'"
+                           v-on:click.prevent.stop="onDebugDBCacheClear"><span class="oi oi-trash"></span> DBキャッシュクリア</a>
+                    </div>
+
+                </li>
+
+            </ul>
+        </div>
+
+        <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
+            <li class="nav-item" v-if="$store.getters.loginUser && $store.getters.loginUser.user_account">
+                <span class="navbar-text" v-if="$store.getters.loginUser && $store.getters.loginUser.user_account">
+                    <span class="oi oi-person"></span> {{$store.getters.loginUser.user_name}}
+                </span>
+            </li>
+            <li class="nav-item" v-if="$store.getters.loginUser && $store.getters.loginUser.user_account">
+                <a class="nav-link" v-bind:href="AppContext.baseUrl + '/logout'">
+                    <span class="oi oi-account-logout"></span>
+                </a>
+            </li>
+        </ul>
+
+    </nav>
+
+</div>

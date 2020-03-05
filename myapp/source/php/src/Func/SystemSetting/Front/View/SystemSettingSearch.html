@@ -1,0 +1,153 @@
+<div class="system-setting-search-component"
+     v-cloak
+     >
+
+    <nav aria-label="breadcrumb">
+        <!-- パンくずリスト -->
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#"><span class="oi oi-home"></span></a></li>
+            <li class="breadcrumb-item active" aria-current="page">システム設定</li>
+        </ol>
+    </nav>
+
+    <div class="card">
+
+        <div class="card-body">
+
+            <!-- 検索条件 -->
+            <form class="searchcondition">
+                <div class="form-group row">
+                    <div class="col-2"><label class="col-form-label">ID</label></div>
+                    <div class="col-3">
+                        <input type="text" class="form-control inline-block" v-model="condition.id">
+                    </div>
+                    <div class="col-2"><label class="col-form-label">コード</label></div>
+                    <div class="col-3">
+                        <input type="text" class="form-control inline-block" v-model="condition.system_code">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-2"><label class="col-form-label">名称</label></div>
+                    <div class="col-3">
+                        <input type="text" class="form-control inline-block" v-model="condition.system_name">
+                    </div>
+                    <div class="col-2"><label class="col-form-label">値</label></div>
+                    <div class="col-3">
+                        <input type="text" class="form-control inline-block" v-model="condition.system_value">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-2"><label class="col-form-label">登録者</label></div>
+                    <div class="col-3">
+                        <input type="text" class="form-control inline-block" v-model="condition.create_user_name">
+                    </div>
+                    <div class="col-2"><label class="col-form-label">登録日時</label></div>
+                    <div class="col-5 input-group">
+                        <date-picker-component name="create_datetime_from"
+                                               class="form-control date"
+                                               v-model="condition.create_datetime_from"></date-picker-component>
+                        <div class="input-group-while">
+                            <span class="input-group-text">～</span>
+                        </div>
+                        <date-picker-component name="create_datetime_to"
+                                               class="form-control date"
+                                               v-model="condition.create_datetime_to"></date-picker-component>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-2"><label class="col-form-label">更新者</label></div>
+                    <div class="col-3">
+                        <input type="text" class="form-control inline-block" v-model="condition.update_user_name">
+                    </div>
+                    <div class="col-2"><label class="col-form-label">更新日時</label></div>
+                    <div class="col-5 input-group">
+                        <date-picker-component name="update_datetime_from"
+                                               class="form-control date"
+                                               v-model="condition.update_datetime_from"></date-picker-component>
+                        <div class="input-group-while">
+                            <span class="input-group-text">～</span>
+                        </div>
+                        <date-picker-component name="update_datetime_to"
+                                               class="form-control date"
+                                               v-model="condition.update_datetime_to"></date-picker-component>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="offset-2 col-10">
+                        <button type="submit" class="btn btn-primary" v-on:click.prevent="onSearch"><span class="oi oi-magnifying-glass"></span> 検索</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    <a v-bind:href="AppContext.baseUrl + '/systemSetting/edit'" class="btn btn-primary"><span class="oi oi-plus"></span> 新規登録</a>
+                </div>
+            </div>
+
+            <!-- 検索結果 -->
+            <div class="searchresult" v-if="list.length > 0">
+
+                <pager-component
+                    v-bind:class="'my-3'"
+                    v-bind:currentPage="page.currentPage"
+                    v-bind:pageSize="page.pageSize"
+                    v-bind:totalCount="page.totalCount"
+                    v-bind:pageList="page.pageList"
+                    v-on:search="onSearchByPager"></pager-component>
+
+                <table class="table" style="table-layout: fixed;">
+                    <thead>
+                        <tr>
+                            <th style="width: 100px;"></th>
+                            <th style="width: 80px;">ID</th>
+                            <th>コード<br>名称</th>
+                            <th>値</th>
+                            <th style="width: 210px;">
+                                登録者<br>
+                                登録日時
+                            </th>
+                            <th style="width: 210px;">
+                                更新者<br>
+                                更新情報
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(rec, index) in list" v-bind:class="{'selected': rec.id === selectedId}">
+                            <td><a v-bind:href="AppContext.baseUrl + '/systemSetting/edit?id=' + rec.id" class="btn btn-primary btn-sm"><span class="oi oi-pencil"></span> 編集</a></td>
+                            <td>{{rec.id}}</td>
+                            <td>
+                                {{rec.system_code}}<br>
+                                {{rec.system_name}}
+                            </td>
+                            <td>{{rec.system_value}}</td>
+                            <td>
+                                {{rec.create_user_name}}<br>
+                                {{rec.create_datetime | formatDateYmdHns}}
+                            </td>
+                            <td>
+                                {{rec.update_user_name}}<br>
+                                {{rec.update_datetime | formatDateYmdHns}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <pager-component
+                    v-bind:class="'my-3'"
+                    v-bind:currentPage="page.currentPage"
+                    v-bind:pageSize="page.pageSize"
+                    v-bind:totalCount="page.totalCount"
+                    v-bind:pageList="page.pageList"
+                    v-on:search="onSearchByPager"></pager-component>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>

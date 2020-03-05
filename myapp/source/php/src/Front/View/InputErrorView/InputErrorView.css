@@ -1,0 +1,8 @@
+.input-error-view-component {
+    display: inline-block;
+    border: none;
+}
+
+.input-error-view-component.error {
+    color: #e85762;
+}

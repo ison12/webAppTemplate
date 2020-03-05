@@ -1,0 +1,51 @@
+<div class="top-component"
+     v-cloak>
+
+    <form class="form-signin">
+
+        <div class="card">
+
+            <div class="card-header">
+                <h3 class="text-muted mt-2 mb-2 text-center">{{AppContext.name}} <img v-bind:src="AppContext.baseUrl + '/assets/img/logo.png'" height="31"></h3>
+            </div>
+
+            <div class="card-body">
+
+                <p class="text-secondary">
+                    <strong>
+                        <span class="small">Welcome to My App!</span><br>
+                        <span class="oi oi-thumb-up"></span> ようこそ、My Appアプリケーションへ！
+                    </strong>
+                </p>
+
+                <p>
+                    <span class="small">My App is a model of the web application which had opening to the public of source cord for its object.</span><br>
+                    My Appはソースコードの公開を目的としたWebアプリケーションのひな型です。
+                </p>
+
+                <p>
+                    <span class="small">My App has the following function.</span><br>
+                    My Appは、以下の機能を備えています。
+                </p>
+
+                <ul class="pl-1" style="list-style: none;">
+                    <li><span class="oi oi-account-login"></span> ログイン（Login）</li>
+                    <li><span class="oi oi-key"></span> パスワード変更（Password change）</li>
+                    <li><span class="oi oi-cog"></span> システム設定の編集（System setting edit）</li>
+                </ul>
+
+                <p>
+                    <a class="btn btn-secondary"
+                       href="https://github.com/ison12/webAppTemplate"
+                       target="_blank">
+                        <span class="oi oi-bug"></span> My GitHub
+                    </a>
+                </p>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>

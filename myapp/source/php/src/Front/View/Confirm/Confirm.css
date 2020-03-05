@@ -1,0 +1,8 @@
+.confirm-component {
+    display: none;
+    z-index: 1100;
+}
+
+.confirm-component .message {
+    word-break: break-all;
+}

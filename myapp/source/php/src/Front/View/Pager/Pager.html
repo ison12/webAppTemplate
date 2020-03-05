@@ -1,0 +1,65 @@
+<div class="pager-component row"
+     v-cloak
+     v-if="pageSize > 0">
+
+    <div class="col-sm-4">
+        <p class="form-control-plaintext">
+            <span class="text-primary">{{currentPage + ' / ' + pageSize + ' ( '+ totalCount + '件 )'}}</span>
+        </p>
+    </div>
+    <div class="col-sm-8">
+        <div class="float-right">
+            <nav>
+                <ul class="pagination" style="margin: 0px;">
+                    <li class="page-item">
+                        <a class="page-link" href="#"
+                           v-bind:pageNum="'f'"
+                           v-on:click.prevent.stop="onSearchByPager({pageNum: 'f'})">
+                            最初
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#"
+                           v-bind:pageNum="'p'"
+                           v-on:click.prevent.stop="onSearchByPager({pageNum: 'p'})">
+                            <span class="oi oi-chevron-left"></span>
+                        </a>
+                    </li>
+                    <template v-for="(pageElement, index) in pageList"
+                              v-bind:index="index">
+                        <li class="page-item"
+                            v-if="pageElement.pageNum !== 'x'"
+                            v-bind:class='{ active: Number(currentPage) === Number(pageElement.pageNum) }'>
+                            <a class="page-link" href="#"
+                               v-bind:pageNum="pageElement.pageNum"
+                               v-on:click.prevent.stop="onSearchByPager(pageElement)">
+                                <span>{{pageElement.pageNum}}</span>
+                            </a>
+                        </li>
+                        <li class="page-item" v-if="pageElement.pageNum === 'x'">
+                            <a class="page-link" href="#"
+                               v-bind:pageNum="pageElement.pageNum"
+                               v-on:click.prevent.stop="onSearchByPager(pageElement)">
+                                <span><span class="oi oi-ellipses"></span></span>
+                            </a>
+                        </li>
+                    </template>
+                    <li class="page-item">
+                        <a class="page-link" href="#"
+                           v-bind:pageNum="'n'"
+                           v-on:click.prevent.stop="onSearchByPager({pageNum: 'n'})">
+                            <span class="oi oi-chevron-right"></span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#"
+                           v-bind:pageNum="'l'"
+                           v-on:click.prevent.stop="onSearchByPager({pageNum: 'l'})">
+                            最後
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>

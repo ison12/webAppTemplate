@@ -1,0 +1,9 @@
+<div class="error-list-component" v-cloak v-if="errors.length > 0">
+    <p class="form-control-plaintext text-error">
+        <span class="oi oi-warning"></span> 内容にエラーがあります。
+    </p>
+    <ul v-if="errorsIsNotEmpty.length > 0">
+        <error-component v-for="error in errorsIsNotEmpty" :key="error.id" :error="error"
+                         v-if="error.id"></error-component>
+    </ul>
+</div>

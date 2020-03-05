@@ -1,0 +1,49 @@
+<div class="app-component" v-cloak ref="view">
+
+    <!-- =================================================================== -->
+    <!-- 共通コンポーネント（シングルトンオブジェクト） -->
+    <alert-component ref='alert'></alert-component>
+    <confirm-component ref='confirm'></confirm-component>
+    <loading-component ref="loading"
+                       v-bind:lock-start-duration="150"
+                       v-bind:lock-end-duration="100"
+                       v-bind:opacity="0.3">
+        <div v-bind:style="{
+             'width' : '120px',
+             'height': '120px',
+             'background-image'   : 'url(' + AppContext.baseUrl + '/assets/img/loading.gif)',
+             'background-repeat'  : 'no-repeat',
+             'background-position': 'center center'
+             }"></div>
+    </loading-component>
+    <!-- =================================================================== -->
+
+    <div class="container-fluid">
+
+        <div class="row header" v-if="isVisibleHeader">
+
+            <div class="col-12">
+                <app-header-component
+                    ref="appHeader"></app-header-component>
+            </div>
+
+        </div>
+
+        <div class="row contents">
+            <div class="col-12">
+                <app-content-component
+                    ref="appContent"
+                    :componentId="componentId"></app-content-component>
+            </div>
+        </div>
+
+        <div class="row footer" v-if="isVisibleFooter">
+            <div class="col-12">
+                <app-footer-component
+                    ref="appFooter"></app-footer-component>
+            </div>
+        </div>
+
+    </div>
+
+</div>

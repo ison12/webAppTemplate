@@ -1,0 +1,264 @@
+/**
+ * アプリケーション共通cssファイル。
+ */
+html {
+    font-size: 0.875rem; /* 14px */
+}
+
+body {
+    font-family: "游ゴシック",YuGothic,"メイリオ",Meiryo,"ヒラギノ角ゴ Pro W3","Hiragino Kaku Gothic Pro",sans-serif;
+    min-width: 1000px;
+    overflow-y: scroll;
+}
+
+body.layout-base {
+    padding-top:50px;
+}
+
+@-ms-viewport
+{
+    width: auto;
+    initial-scale: 1;
+}
+@viewport
+{
+    width: device-width;
+    initial-scale: 1;
+}
+
+[v-cloak] {
+    display: none;
+}
+
+.header {
+}
+
+.contents {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.footer {
+
+}
+
+.navbar-brand{
+    font-size: 1.5rem;
+}
+
+#app {
+
+}
+
+#app .col-form-label {
+
+    text-align: right;
+
+    background-color: white;
+    color: gray;
+
+    /*
+    border: 1px #ced4da solid;
+    border-radius: 5px;
+    */
+    padding: 6px 6px;
+    white-space: pre-wrap;
+    width: 100%;
+}
+
+.input-group-while {
+    display: -ms-flexbox;
+    display: flex;
+    margin-left : -1px;
+    margin-right: -1px;
+}
+
+.inline-block {
+    /*
+    width: auto;
+    display: inline-block;
+    */
+}
+
+.date {
+    width: 120px;
+}
+
+.form-group {
+    margin-bottom: 10px;
+}
+
+.one-row-space {
+    margin-bottom: 15px;
+}
+
+/*
+ * エラー関連
+ */
+.text-error {
+    color: #eea5b0;
+}
+
+label.error {
+    color: #eea5b0 !important;
+}
+
+.error {
+    border-color: #eea5b0;
+}
+
+.error.tooltip {
+    background-color: transparent;
+}
+
+.error.tooltip .arrow::before,
+.error.tooltip .arrow::after
+{
+    border-top-color: #eea5b0 !important;
+}
+
+.error .tooltip-outer {
+    max-width: 500px;
+    padding: 0.25rem 0.5rem;
+    text-align: center;
+    border: 2px solid #eea5b0;
+    color: #eea5b0;
+    background-color: white;
+    border-radius: 0.25rem;
+}
+
+.error .tooltip-inner {
+    color: #eea5b0;
+    background-color: white;
+    padding: 0;
+    margin: 0;
+    border: none;
+}
+
+.one-line {
+    margin-bottom: 1rem;
+}
+
+.searchresult .selected {
+    background-color: ivory;
+}
+/*
+ * jQuery UIスタイル
+ */
+.ui-widget,
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
+    font-family: "游ゴシック",YuGothic,"メイリオ",Meiryo,"ヒラギノ角ゴ Pro W3","Hiragino Kaku Gothic Pro",sans-serif;
+}
+
+/*
+ * DatePickerのスタイル
+ */
+.ui-datepicker .ui-datepicker-prev {
+    margin-left: 3px;
+    margin-top: 3px;
+    height: 30px;
+}
+
+.ui-datepicker .ui-datepicker-next {
+    margin-right: 3px;
+    margin-top: 3px;
+    height: 30px;
+}
+
+.ui-datepicker select.ui-datepicker-year {
+    width: 40%;
+    height: 30px;
+    margin-right: 8px;
+    font-size: 0.9rem;
+}
+
+.ui-datepicker select.ui-datepicker-month {
+    width: 40%;
+    height: 30px;
+    font-size: 0.9rem;
+}
+
+.ui-datepicker th {
+    font-weight: normal;
+}
+
+.ui-datepicker .ui-state-default {
+    line-height: 2;
+    background: #fff;
+    text-align: right;
+    line-height: 2.5;
+}
+
+.ui-datepicker select.ui-datepicker-month {
+    width: 40%;
+}
+
+.ui-datepicker .ui-state-default.ui-state-hover {
+    background: #f6f6f6;
+}
+
+.ui-datepicker .ui-state-default.ui-state-active {
+    background: #007bff;
+}
+
+.ui-datepicker .ui-state-default.ui-state-highlight {
+    background: #fffa90;
+}
+
+.ui-datepicker-calendar thead > tr > th:nth-child(1) > span {
+    color: red;
+}
+
+.ui-datepicker-calendar thead > tr > th:nth-child(7) > span {
+    color: blue;
+}
+
+.ui-datepicker-calendar tbody > tr > td:nth-child(1) > a.ui-state-default {
+    color: red;
+}
+
+.ui-datepicker-calendar tbody > tr > td:nth-child(7) > a.ui-state-default {
+    color: blue;
+}
+
+/*
+ * モーダルダイアログのスタイル
+ */
+.modal-dialog {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100%;
+    margin: auto;
+    pointer-events: none;
+}
+
+.liquid-layout {
+    display: flex;
+    width: 100%;
+}
+
+.liquid-layout > div {
+}
+
+/*
+ * jQuery UIのスタイル
+ */
+.ui-dialog .ui-dialog-title {
+    font-weight: normal;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+    border-top-width: 0;
+    border-left-width: 0;
+    border-right-width: 0;
+    padding: 10px 15px 10px 15px;
+}
+
+.ui-dialog .ui-dialog-titlebar-close {
+    margin-right: 15px;
+}
+
+.ui-dialog {
+    padding: 0;
+}

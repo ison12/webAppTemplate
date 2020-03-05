@@ -1,0 +1,13 @@
+.error-list-component {
+
+}
+
+.error-list-component .text-error {
+    color: #e85762;
+}
+
+.error-list-component ul {
+    list-style-type: none;
+    padding-left: 0rem;
+    color: #e85762;
+}

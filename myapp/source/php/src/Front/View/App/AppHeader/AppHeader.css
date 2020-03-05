@@ -1,0 +1,13 @@
+.app-header-component {
+
+}
+
+.app-header-component .new-flash {
+    animation: app-header-component-new-flash 3s ease infinite alternate;
+}
+
+@keyframes app-header-component-new-flash {
+    50% {
+        opacity: 0;
+    }
+}

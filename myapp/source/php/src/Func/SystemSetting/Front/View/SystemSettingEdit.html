@@ -1,0 +1,113 @@
+<div class="system-setting-edit-component"
+     v-cloak>
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#"><span class="oi oi-home"></span></a></li>
+            <li class="breadcrumb-item"><a v-bind:href="AppContext.baseUrl + '/systemSetting/search'">システム設定</a></li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <span v-if="isNew === true">新規登録</span>
+                <span v-else-if="isNew === false">編集</span>
+            </li>
+        </ol>
+    </nav>
+
+    <form>
+
+        <div class="card">
+            <div class="card-body">
+
+                <error-list-component :errors="errorsOnBoard"></error-list-component>
+
+                <div class="form-group row">
+                    <div class="col-2"><label class="col-form-label">ID</label></div>
+                    <div class="col-3">
+                        <input type="text" name="id" class="form-control" v-model="data.id" readonly="readonly">
+                    </div>
+                    <div class="col-3">
+                        <input-error-view-component class="form-control-plaintext" :selector="'[name=id]'" :messageInfo="getError('id')"></input-error-view-component>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-2"><label class="col-form-label">コード</label></div>
+                    <div class="col-3">
+                        <input type="text" name="system_code" class="form-control" v-model="data.system_code">
+                    </div>
+                    <div class="col-3">
+                        <input-error-view-component class="form-control-plaintext" :selector="'[name=system_code]'" :messageInfo="getError('system_code')"></input-error-view-component>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-2"><label class="col-form-label">名称</label></div>
+                    <div class="col-6">
+                        <input type="text" name="system_name" class="form-control" v-model="data.system_name">
+                    </div>
+                    <div class="col-3">
+                        <input-error-view-component class="form-control-plaintext" :selector="'[name=system_name]'" :messageInfo="getError('system_name')"></input-error-view-component>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-2"><label class="col-form-label">値</label></div>
+                    <div class="col-6">
+                        <input type="text" name="system_value" class="form-control" v-model="data.system_value">
+                    </div>
+                    <div class="col-3">
+                        <input-error-view-component class="form-control-plaintext" :selector="'[name=system_value]'" :messageInfo="getError('system_value')"></input-error-view-component>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-2"><label class="col-form-label">登録日時</label></div>
+                    <div class="col-4">
+                        <input type="text" name="create_datetime" class="form-control" v-bind:value="data.create_datetime | formatDateYmdHns" readonly="readonly">
+                    </div>
+                    <div class="col-3">
+                        <input-error-view-component class="form-control-plaintext" :selector="'[name=create_datetime]'" :messageInfo="getError('create_datetime')"></input-error-view-component>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-2"><label class="col-form-label">登録者</label></div>
+                    <div class="col-4">
+                        <input type="text" name="create_user_id" class="form-control" v-model="data.create_user_name" readonly="readonly">
+                    </div>
+                    <div class="col-3">
+                        <input-error-view-component class="form-control-plaintext" :selector="'[name=create_user_id]'" :messageInfo="getError('create_user_id')"></input-error-view-component>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-2"><label class="col-form-label">更新日時</label></div>
+                    <div class="col-4">
+                        <input type="text" name="update_datetime" class="form-control" v-bind:value="data.update_datetime | formatDateYmdHns" readonly="readonly">
+                    </div>
+                    <div class="col-3">
+                        <input-error-view-component class="form-control-plaintext" :selector="'[name=update_datetime]'" :messageInfo="getError('update_datetime')"></input-error-view-component>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-2"><label class="col-form-label">更新者</label></div>
+                    <div class="col-4">
+                        <input type="text" name="update_user_id" class="form-control" v-model="data.update_user_name" readonly="readonly">
+                    </div>
+                    <div class="col-3">
+                        <input-error-view-component class="form-control-plaintext" :selector="'[name=update_user_id]'" :messageInfo="getError('update_user_id')"></input-error-view-component>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="card-footer text-muted">
+                <div class="form-group row">
+                    <div class="col-6">
+                        <a v-bind:href="AppContext.baseUrl + '/systemSetting/search?previousSearch=true&selectedId=' + data.id"
+                           class="btn btn-primary" tabindex="-1"><span class="oi oi-arrow-left"></span> 戻る</a>
+                    </div>
+                    <div class="col-6 float-right text-right"
+                         v-if="isSucceededInLoad">
+                        <button type="submit" class="btn btn-primary" v-on:click.prevent="onSave"><span class="oi oi-pencil"></span> 保存</button>
+                        <button type="submit" class="btn btn-danger" v-on:click.prevent="onDelete" v-if="!isNew"><span class="oi oi-x"></span> 削除</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>

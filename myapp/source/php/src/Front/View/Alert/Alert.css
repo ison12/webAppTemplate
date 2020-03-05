@@ -1,0 +1,8 @@
+.alert-component {
+    display: none;
+    z-index: 1100;
+}
+
+.alert-component .message {
+    word-break: break-all;
+}
