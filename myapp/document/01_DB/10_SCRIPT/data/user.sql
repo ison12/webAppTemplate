@@ -13,9 +13,9 @@ INSERT INTO `user` (
    ,`delete_flag`
 ) VALUES (
     1
-   ,'myapp@ezolab.co.jp'
+   ,'myapp@ison-t.com'
    ,'$2y$10$Sp9mz16qruXF3bwByS8hPOgLTNOlxwsBmAf0.dCy75x8hzDO9h8xK'
-   ,'myapp@ezolab.co.jp'
+   ,'myapp@ison-t.com'
    ,'My User'
    ,'マイ ユーザー'
    ,' '

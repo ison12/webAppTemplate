@@ -7,6 +7,7 @@ use App\Common\Exception\ServiceException;
 use App\Common\Util\DateUtil;
 use App\Common\Util\GuidUtil;
 use App\Common\Util\RandomUtil;
+use App\Common\Util\UrlUtil;
 use App\Common\Validation\Validatation;
 use App\Dao\User\UserAccountResetDao;
 use App\Dao\User\UserDao;
@@ -138,19 +139,10 @@ class PasswordChangeRequestService extends DBBaseService {
      */
     private function createPasswordChangeUrl($uri, $userAccount, $id) {
 
-        $port = '';
-        if (!(
-                ($uri->getScheme() === 'http' && $uri->getPort() === 80) ||
-                ($uri->getScheme() === 'https' && $uri->getPort() === 443)
-                )
-        ) {
-            $port = ':' . $uri->getPort();
-        }
-
         $userAccountEnc = \urlencode($userAccount);
         $idEnc = \urlencode($id);
 
-        $passwordChangeUrl = "{$uri->getScheme()}://{$uri->getHost()}{$port}{$uri->getBasePath()}/password/change?user_account={$userAccountEnc}&id={$idEnc}";
+        $passwordChangeUrl = UrlUtil::createRootUrlWithBase($uri) . "/password/change?user_account={$userAccountEnc}&id={$idEnc}";
         return $passwordChangeUrl;
     }
 

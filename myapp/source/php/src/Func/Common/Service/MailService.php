@@ -55,7 +55,7 @@ class MailService extends DBBaseService {
 
         // メール送信
         $mailSender = MailSender::getInstance('default', $setting);
-        $mailSender->send($toAddressList, $ccAddressList, $mailSubject, $mailBody);
+        $mailSender->send($toAddressList, $ccAddressList, [], $mailSubject, $mailBody);
     }
 
     /**

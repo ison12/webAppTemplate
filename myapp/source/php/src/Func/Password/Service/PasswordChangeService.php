@@ -5,6 +5,7 @@ namespace App\Func\Password\Service;
 use App\Common\Exception\DBException;
 use App\Common\Exception\ServiceException;
 use App\Common\Util\DateUtil;
+use App\Common\Util\UrlUtil;
 use App\Common\Validation\Validatation;
 use App\Dao\User\UserAccessDao;
 use App\Dao\User\UserAccountResetDao;
@@ -196,7 +197,7 @@ class PasswordChangeService extends DBBaseService {
         $userAccountResetRecord = $userAccountResetDao->selectByAccountResetUri($id);
 
         // レコード存在チェック
-        if ($userAccountResetRecord === null || (bool) $userAccountResetRecord['delete_flag']) {
+        if ($userAccountResetRecord === null || (isset($userAccountResetRecord['delete_flag']) && (bool) $userAccountResetRecord['delete_flag'])) {
             // レコードが存在しない
             return null;
         }
@@ -279,16 +280,7 @@ class PasswordChangeService extends DBBaseService {
      */
     private function createLoginUrl($uri) {
 
-        $port = '';
-        if (!(
-                ($uri->getScheme() === 'http' && $uri->getPort() === 80) ||
-                ($uri->getScheme() === 'https' && $uri->getPort() === 443)
-                )
-        ) {
-            $port = ':' . $uri->getPort();
-        }
-
-        $loginUrl = "{$uri->getScheme()}://{$uri->getHost()}{$port}{$uri->getBasePath()}/login";
+        $loginUrl = UrlUtil::createRootUrlWithBase($uri) . "/login";
         return $loginUrl;
     }
 

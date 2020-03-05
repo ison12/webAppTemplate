@@ -65,11 +65,13 @@ class MailSender {
      * メールを送信する。
      * @param array $toAddressList 宛先リスト
      * @param array $ccAddressList CCリスト
+     * @param array $bccAddressList BCCリスト
      * @param string $subject 件名
      * @param string $body 本文
      */
     public function send(array $toAddressList
             , array $ccAddressList
+            , array $bccAddressList
             , string $subject
             , string $body) {
 
@@ -117,10 +119,9 @@ class MailSender {
             $mail->addCC($address['address'], $address['name']);
         }
 
-        foreach ($this->bccAddressList as $address) {
+        foreach ($bccAddressList as $address) {
             $mail->addBcc($address['address'], $address['name']);
         }
-
 
         $mail->Subject = $subject; // メールタイトル
         $mail->Body = $body; // メール本文

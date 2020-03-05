@@ -8,9 +8,12 @@ $app = require __DIR__ . '/../src/bootstrap.php';
 
 $app->any('/[{func1}[/{func2}[/{func3}]]]', function (Request $request, Response $response, array $args) use($app) {
 
-    $func1 = ucfirst($args['func1']) ?? null;
-    $func2 = ucfirst($args['func2']) ?? null;
-    $func3 = ucfirst($args['func3']) ?? null;
+    $func1 = $args['func1'] ?? null;
+    $func1 = ucfirst($func1);
+    $func2 = $args['func2'] ?? null;
+    $func2 = ucfirst($func2);
+    $func3 = $args['func3'] ?? null;
+    $func3 = ucfirst($func3);
 
     $class = '';
     $method = '';

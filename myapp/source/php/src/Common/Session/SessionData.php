@@ -14,7 +14,7 @@ class SessionData {
      * @return User ユーザーオブジェクト
      */
     public static function getUser() {
-        return $_SESSION[SessionData::class . '_USER'];
+        return $_SESSION[SessionData::class . '_USER'] ?? null;
     }
 
     /**
