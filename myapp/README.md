@@ -118,12 +118,20 @@ Composerで依存ライブラリをインストール。
 NPMで依存ライブラリをインストール。  
 プロジェクトエクスプローラ上でプロジェクトを右クリックして、npmインストールを選択する。
 
-## Webアプリの起動
+## 開発時のアクセス方法
 
-Xampp Control Panelを起動し、Startボタンをクリックする。
+1. Xampp Control Panelを起動し、Startボタンをクリックする。  
+localhost:5555はApache Webサーバー
+2. Netbeansのプロジェクトエクスプローラ上でプロジェクトを右クリックして、npm scriptsのstartを実行する。
+3. ログインページにアクセスする。  
+localhost:8080はNodeJs Webサーバー。NodeJs Webサーバーを経由する理由はHMR機能を使用したいから。  
+http://localhost:8080/myapp/login
 
-ログインページにアクセスする。    
-    http://localhost:5555/myapp/login
+## リリースのためのビルドファイル生成
+
+1. Netbeansのプロジェクトエクスプローラ上でプロジェクトを右クリックして、npm scriptsのbuildを実行する。
+1. ビルドファイルは、public/dist以下に出力される。  
+このファイルは、本番環境にデプロイする際に必要なソースとなる。
 
 # 画面例
 

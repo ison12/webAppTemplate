@@ -107,13 +107,41 @@ Composer.jsonを編集して、Composerの install(dev) を実施。
 Webpackの設定ファイルを開発用と本番用で分割。  
 参考：https://webpack.js.org/guides/production/
 
-webpack.common.js
+HMRの有効化設定（プロキシでdist以外のリクエストはApacheに転送する）  
+webpack.dev.js
 
     ...
     devServer: {
-        // vueファイルなどの変更時にファイルを書き込むようにする
-        writeToDisk: true
-    },
+        // 生成されたファイルをディスクに書き込むかどうか
+        writeToDisk: false,
+        // ブラウザの表示有無
+        open: true,
+        // ブラウザの表示ページ
+        openPage: prefixUri + '/login',
+        // HMR (Hot Module Replacement) の有無
+        hot: true,
+        // Webページリロードの有無
+        //inline: true,
+        // Webサーバーの公開ディレクトリ
+        contentBase: path.join(__dirname, 'public'),
+        // Webサーバーの公開ディレクトリの監視有無
+        watchContentBase: true,
+        // Webサーバーの公開URL
+        publicPath: prefixUri + "/",
+        // プロキシ設定
+        proxy: [
+            {
+                context: [
+                    // すべてのリクエストを対象とする
+                    '**',
+                    // dist以下は対象外とする
+                    '!' + prefixUri + '/dist/**'
+                ],
+                // Apache Webサーバーに転送する
+                target: 'http://localhost:5555'
+            }
+        ]
+    }
     ...
 
 main.js
@@ -136,3 +164,4 @@ App.vue
 * https://vue-loader.vuejs.org/
 * https://webpack.js.org/
 * https://qiita.com/rifutan/items/a55f132d4dae7e2f1941
+* https://qiita.com/riversun/items/d27f6d3ab7aaa119deab#3hmrhot-module-replacement%E3%81%AE%E8%A8%AD%E5%AE%9A
