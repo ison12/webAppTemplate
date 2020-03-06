@@ -1,4 +1,6 @@
-// webpack.config.js
+/* global __dirname */
+
+// webpack common setting
 const path = require('path');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
@@ -13,8 +15,9 @@ module.exports = {
     },
     entry: path.resolve(__dirname, 'src', 'main.js'),
     output: {
-        path: path.resolve(__dirname, 'public', 'dist'),
-        filename: 'bundle.js'
+        path: path.resolve(__dirname, 'public'),
+        filename: 'dist/bundle.js',
+        publicPath: prefixUri + "/"
     },
     module: {
         rules: [
@@ -42,7 +45,7 @@ module.exports = {
                 loader: "file-loader",
                 options: {
                     name: '[path][name].[ext]',
-                    outputPath: 'images/',
+                    outputPath: 'dist/images/',
                     publicPath: function (filePath) {
                         return prefixUri + '/dist/images/' + filePath;
                     }
@@ -53,7 +56,7 @@ module.exports = {
                 loader: "file-loader",
                 options: {
                     name: '[path][name].[ext]',
-                    outputPath: 'fonts/',
+                    outputPath: 'dist/fonts/',
                     publicPath: function (filePath) {
                         return prefixUri + '/dist/fonts/' + filePath;
                     }
