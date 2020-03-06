@@ -1,2 +1,3 @@
-# webAppTemplate
-This is the source code that becomes the template for the Web application.
+# 説明
+ようこそ、Webアプリケーション用のテンプレートリポジトリへ。  
+サブディレクトリをたどり、テンプレートソースをご覧ください。
