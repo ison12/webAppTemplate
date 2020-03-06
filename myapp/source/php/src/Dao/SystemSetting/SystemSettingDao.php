@@ -97,7 +97,7 @@ class SystemSettingDao extends BaseDao {
      * @param bool $isLock ロック有無
      * @return array レコード
      */
-    public function selectById(string $id, bool $isDelete = false, bool $isLock = false): array {
+    public function selectById(string $id, bool $isDelete = false, bool $isLock = false): ?array {
 
         // SELECTクエリ
         $querySelect = DBFactory::createSelect()

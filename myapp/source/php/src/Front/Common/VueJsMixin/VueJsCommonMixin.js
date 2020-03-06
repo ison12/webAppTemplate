@@ -1,8 +1,7 @@
-/* global AppContext */
+/* global AppContext, AppFuncs */
 
 import StringUtil from "Front/Common/Util/StringUtil.js";
 import DateUtil from "Front/Common/Util/DateUtil.js";
-import AppAjax from "Front/Common/Ajax/AppAjax.js";
 
 /**
  * VueJsの共通のMixin。
@@ -11,9 +10,7 @@ export default {
     data: function () {
         return {
             // アプリケーションコンテキスト
-            AppContext: AppContext,
-            // Ajaxインスタンス
-            ajax: null
+            AppContext: AppContext
         };
     },
     created: function () {
@@ -79,59 +76,7 @@ export default {
          */
         getAjax: function () {
 
-            if (this.ajax) {
-                return this.ajax;
-            }
-
-            /**
-             * ロード時の処理
-             * @param {Boolean} isShow true 表示時、false 非表示時
-             */
-            const onLoading = (isShow) => {
-
-                const lc = this.getLoadingComponent();
-
-                if (isShow) {
-                    lc.show();
-                } else {
-                    lc.hide();
-                }
-            };
-
-            /**
-             * 通信成功時の処理。
-             * @param {Object|Array} data
-             * @param {String} textStatus
-             * @param {Object} jqXHR
-             */
-            const onDone = (data, textStatus, jqXHR) => {
-                this.$store.commit("loginUser", data.user);
-            };
-
-            /**
-             * 通信失敗時の処理。
-             * @param {Object} jqXHR
-             * @param {String} textStatus
-             * @param {Object} errorThrown
-             * @param {Object} settings
-             */
-            const onFail = (jqXHR, textStatus, errorThrown, settings) => {
-                const ac = this.getAlertComponent();
-                ac.showError("通信に失敗しました。", this.collectErrorMessages(settings.url, jqXHR, textStatus, errorThrown));
-            };
-
-            /**
-             * 処理終了時の処理。
-             * @param {Object|Array} dataOrJqXHR
-             * @param {String} textStatus
-             * @param {Object} jqXHROrErrorThrown
-             */
-            const onAlways = (dataOrJqXHR, textStatus, jqXHROrErrorThrown) => {
-
-            };
-
-            this.ajax = new AppAjax(onLoading, onDone, onFail, onAlways);
-            return this.ajax;
+            return AppFuncs.getAjax();
         },
         /**
          * エラーメッセージを取得する。
@@ -176,15 +121,6 @@ export default {
          */
         convertNewLineToBr: function (val) {
             return StringUtil.convertNewLineToBr(val);
-        },
-        // エラー情報の更新
-        updateErrorInfo: function (view) {
-            // （エラーが有る場合は）エラー情報の更新
-
-            //var errorsOnBoard = InputError.bindTooltip(this.errors, $(view).find("label,input,select"));
-            //return errorsOnBoard;
-
-            return [];
         }
     },
     filters: {

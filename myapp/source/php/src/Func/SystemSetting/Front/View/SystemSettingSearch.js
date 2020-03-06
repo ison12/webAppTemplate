@@ -76,8 +76,6 @@ export default {
 
                 // VueJsの更新
                 this.bindData(data);
-                // （エラーが有る場合は）エラー情報の更新
-                this.errorsOnBoard = this.updateErrorInfo(this.$el);
 
             }).catch(function () {
 
@@ -99,8 +97,6 @@ export default {
 
                 // VueJsの更新
                 this.bindData(data);
-                // （エラーが有る場合は）エラー情報の更新
-                this.errorsOnBoard = this.updateErrorInfo(this.$el);
 
             }).catch(function () {
 

@@ -86,7 +86,7 @@ class PasswordChangeService extends DBBaseService {
 
             // パスワードと確認欄の同一性チェック
             if ($data['password'] !== $data['password_confirm']) {
-                $validation->createAnyError($errors, 'password', 'validation_password_confirm', []);
+                $validation->createAnyError($errors, 'password_confirm', 'validation_password_confirm', []);
             }
         }
 
@@ -156,7 +156,7 @@ class PasswordChangeService extends DBBaseService {
                 // 認証コードチェック
                 if ($data['auth_code'] !== $userAccountResetRecord['auth_code']) {
                     // 認証コードが不正
-                    $this->throwAnyError('error_invalid_auth_code', 'error_invalid_auth_code', []);
+                    $this->throwAnyError('auth_code', 'error_invalid_auth_code', []);
                 }
 
                 // 新しいパスワードで更新する

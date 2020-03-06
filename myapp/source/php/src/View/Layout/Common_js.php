@@ -19,14 +19,19 @@ use App\Common\Util\ViewUtil;
 </script>
 
 <?php /* バンドルファイルの読み込み */ ?>
+<?php /* ※本ファイルの読み込み後に、main.jsで定義したグローバル変数などが読み込みできるようになる */ ?>
 <script src="<?= $__baseUrl . ViewUtil::getUrlWithFileTimestamp('/dist/bundle.js') ?>" ></script>
 
-<?php /* VueJsの初期化 */ ?>
+<?php /* コンテンツコンポーネントの適用 */ ?>
 <script type="text/javascript">
-    var componentId = "<?= $__contentsViewName ?>";
-    if (componentId && componentId !== "") {
-        componentId += "Component";
+
+    // コンテンツのコンポーネントIDの取得
+    var contentsComponentId = "<?= $__contentsViewName ?>";
+    if (contentsComponentId && contentsComponentId !== "") {
+        contentsComponentId += "Component";
     }
 
-    window.AppFuncs.applyContent(componentId, <?= $__isVisibleHeader ?>, <?= $__isVisibleFooter ?>);
+    // コンテンツコンポーネントの適用
+    window.AppFuncs.applyContentComponent(contentsComponentId, <?= $__isVisibleHeader ?>, <?= $__isVisibleFooter ?>);
+    
 </script>

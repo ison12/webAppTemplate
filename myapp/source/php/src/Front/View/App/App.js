@@ -35,9 +35,9 @@ export default {
     data() {
         return {
             // ヘッダの表示有無
-            isVisibleHeader: true,
+            isVisibleHeader: false,
             // フッタの表示有無
-            isVisibleFooter: true,
+            isVisibleFooter: false,
             // コンポーネントID
             componentId: null
         };

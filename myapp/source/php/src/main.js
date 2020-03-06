@@ -102,6 +102,13 @@ const vm = new Vue({
     render: h => h("AppComponent")
 });
 
+
+// -----------------------------------------------------------------------------
+// Ajaxインスタンスの定義
+// -----------------------------------------------------------------------------
+import AppAjax from "Front/Common/Ajax/AppAjax.js";
+let ajax = null;
+
 /**
  * アプリケーションの関数定義
  */
@@ -113,18 +120,119 @@ var AppFuncs = {
      * @param {Boolean} isVisibleHeader ヘッダ表示有無
      * @param {Boolean} isVisibleFooter フッタ表示有無
      */
-    applyContent(componentId, isVisibleHeader, isVisibleFooter) {
+    applyContentComponent(componentId, isVisibleHeader, isVisibleFooter) {
 
         vm.$nextTick(function () {
 
             // $root要素の子はAppComponent（refs設定がないので$children[0]で決め打ちする）
             var appComponent = vm.$root.$children[0];
 
+            // Ajaxオブジェクトを初期化する
+            AppFuncs.getAjax();
+
             // AppComponentのdataを設定する
             appComponent.componentId = componentId;
             appComponent.isVisibleHeader = isVisibleHeader;
             appComponent.isVisibleFooter = isVisibleFooter;
         });
+    },
+
+    /**
+     * アプリケーション用Ajaxオブジェクトを取得する。
+     * 初回取得時に生成されたインスタンスが以後キャッシュされる。
+     * @returns {AppAjax} アプリケーション用Ajax
+     */
+    getAjax() {
+
+        if (ajax) {
+            return ajax;
+        }
+
+        // $root要素の子はAppComponent（refs設定がないので$children[0]で決め打ちする）
+        var appComponent = vm.$root.$children[0];
+        var alertComponent = appComponent.$refs.alert;
+        var confirmComponent = appComponent.$refs.confirm;
+        var loadingComponent = appComponent.$refs.loading;
+
+        /**
+         * ロード時の処理
+         * @param {Boolean} isShow true 表示時、false 非表示時
+         */
+        const onLoading = (isShow) => {
+
+            const lc = loadingComponent;
+
+            if (isShow) {
+                lc.show();
+            } else {
+                lc.hide();
+            }
+        };
+
+        /**
+         * 通信成功時の処理。
+         * @param {Object|Array} data
+         * @param {String} textStatus
+         * @param {Object} jqXHR
+         */
+        const onDone = (data, textStatus, jqXHR) => {
+            vm.$store.commit("loginUser", data.user);
+        };
+
+        /**
+         * 通信失敗時の処理。
+         * @param {Object} jqXHR
+         * @param {String} textStatus
+         * @param {Object} errorThrown
+         * @param {Object} settings
+         */
+        const onFail = (jqXHR, textStatus, errorThrown, settings) => {
+
+            const getErrorMessage = function (url, jqXHR, textStatus, errorThrown) {
+
+                const TIMEOUT_MESSAGE = 'タイムアウトしました。再度実行してください。 ';
+                const EXPECTED_MESSAGE = '予期せぬエラーが発生しました。';
+
+                // textStatusについて
+                // -----------------------------------
+                // "success"
+                // "notmodified"
+                // "error"
+                // "timeout"
+                // "abort"
+                // "parsererror"
+
+                if (textStatus === "timeout") {
+                    const msg = String(TIMEOUT_MESSAGE);
+                    return [msg,
+                        "アクセスURL=" + url];
+                } else {
+                    const msg = EXPECTED_MESSAGE;
+                    return [msg,
+                        "アクセスURL=" + url,
+                        "ステータス=" + textStatus,
+                        errorThrown && errorThrown.message ? "例外=" + errorThrown.message : null,
+                        XMLHttpRequest.responseText];
+                }
+
+            };
+
+            const ac = alertComponent;
+            ac.showError("通信に失敗しました。", getErrorMessage(settings.url, jqXHR, textStatus, errorThrown));
+        };
+
+        /**
+         * 処理終了時の処理。
+         * @param {Object|Array} dataOrJqXHR
+         * @param {String} textStatus
+         * @param {Object} jqXHROrErrorThrown
+         */
+        const onAlways = (dataOrJqXHR, textStatus, jqXHROrErrorThrown) => {
+
+        };
+
+        ajax = new AppAjax(onLoading, onDone, onFail, onAlways);
+        return ajax;
     }
 
 };

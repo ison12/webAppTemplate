@@ -95,7 +95,7 @@ class SystemSettingEditService extends DBBaseService {
                 $selectRecord = null;
                 if (!ValUtil::isEmpty($data['id'])) {
                     // ID値が設定されている場合、レコードを取得する
-                    $selectRecord = $systemDao->selectById($data['id']);
+                    $selectRecord = $systemDao->selectById($data['id'], false, true);
                     if ($selectRecord === null) {
                         // レコードが存在しない場合
                         $error = Validatation::createError(
@@ -156,7 +156,7 @@ class SystemSettingEditService extends DBBaseService {
                 $systemDao = new SystemSettingDao($dbConnection);
 
                 // レコードの存在チェックを実施する
-                $selectRecord = $systemDao->selectById($data['id']);
+                $selectRecord = $systemDao->selectById($data['id'], false, true);
 
                 if ($selectRecord !== null) {
                     // レコードが存在する場合、削除する

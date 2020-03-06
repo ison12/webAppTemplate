@@ -13,19 +13,9 @@ export default class {
      */
     constructor(onNotifyApi, onNotifyApiParams) {
 
-        this.setNotifyApi(onNotifyApi, onNotifyApiParams);
-        this.applyErrorHandler();
-    }
-
-    /**
-     * 通知用APIを設定する。
-     * @param {Function} onNotifyApi 通知用API
-     * @param {Object} onNotifyApiParams 通知用APIパラメータ
-     */
-    setNotifyApi(onNotifyApi, onNotifyApiParams) {
-
         this.onNotifyApi = onNotifyApi;
         this.onNotifyApiParams = onNotifyApiParams;
+        this.applyErrorHandler();
     }
 
     /**
@@ -33,9 +23,9 @@ export default class {
      */
     applyErrorHandler() {
 
-        window.addEventListener("error", this.onErrorWindow);
-        window.addEventListener("unhandledrejection", this.onErrorRejection);
-        Vue.config.errorHandler = this.onErrorVueJs;
+        window.addEventListener("error", this.onErrorWindow.bind(this));
+        window.addEventListener("unhandledrejection", this.onErrorRejection.bind(this));
+        Vue.config.errorHandler = this.onErrorVueJs.bind(this);
     }
 
     /**

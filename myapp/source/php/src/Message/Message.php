@@ -1,12 +1,12 @@
 <?php
 
 return [
-    'error_data_not_found' => '%itemName%が、見つかりません。他の操作によって削除された可能性があります。',
+    'error_data_not_found' => '%itemName%が見つかりません。他の操作によって削除された可能性があります。',
     'error_data_not_use' => '%itemName%は現在ご利用いただけません。',
-    'error_data_already_update' => '%itemName%は、他の操作によって更新されてデータが変更されたため、更新できませんでした。',
+    'error_data_already_update' => '%itemName%が他の操作によって変更されているため、更新できませんでした。',
     'error_data_lock_timeout' => '%itemName%は、他の操作によってロックされているため、更新できませんでした。',
     'error_data_query_timeout' => '%itemName%は、長時間応答が無かったため処理に失敗しました。',
-    'error_data_duplicate' => '%itemName%は、データが重複したため処理に失敗しました。',
+    'error_data_duplicate' => '%itemName%のデータが重複しているため、処理に失敗しました。',
     'error_unauth_summary' => '未認証エラー',
     'error_unauth' => "未認証もしくは長時間アクセスが無かったため、セッションが無効になりました。\nログインし直して再度アクセスしてください。",
     'error_invalid_auth_summary' => '認証エラー',
