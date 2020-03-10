@@ -20,15 +20,6 @@
                 <error-list-component :errors="errorsOnBoard"></error-list-component>
 
                 <div class="form-group row">
-                    <div class="col-2"><label class="col-form-label">ID</label></div>
-                    <div class="col-3">
-                        <input type="text" name="id" class="form-control" v-model="data.id" readonly="readonly">
-                    </div>
-                    <div class="col-3">
-                        <input-error-view-component class="form-control-plaintext" :selector="'[name=id]'" :messageInfo="getError('id')"></input-error-view-component>
-                    </div>
-                </div>
-                <div class="form-group row">
                     <div class="col-2"><label class="col-form-label">コード</label></div>
                     <div class="col-3">
                         <input type="text" name="system_code" class="form-control" v-model="data.system_code">
@@ -97,7 +88,7 @@
             <div class="card-footer text-muted">
                 <div class="form-group row">
                     <div class="col-6">
-                        <a v-bind:href="AppContext.baseUrl + '/systemSetting/search?previousSearch=true&selectedId=' + data.id"
+                        <a v-bind:href="AppContext.baseUrl + '/systemSetting/search?previousSearch=true&selectedId=' + data.system_code_last"
                            class="btn btn-primary" tabindex="-1"><span class="oi oi-arrow-left"></span> 戻る</a>
                     </div>
                     <div class="col-6 float-right text-right"

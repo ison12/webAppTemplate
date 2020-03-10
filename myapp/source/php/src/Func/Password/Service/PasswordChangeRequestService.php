@@ -9,10 +9,12 @@ use App\Common\Util\GuidUtil;
 use App\Common\Util\RandomUtil;
 use App\Common\Util\UrlUtil;
 use App\Common\Validation\Validatation;
+use App\Dao\SystemSetting\SystemSettingDao;
 use App\Dao\User\UserAccountResetDao;
 use App\Dao\User\UserDao;
 use App\Func\Base\Service\DBBaseService;
 use App\Func\Common\Service\MailService;
+use DateInterval;
 use Psr\Http\Message\UriInterface;
 use Slim\Http\Uri;
 
@@ -71,7 +73,12 @@ class PasswordChangeRequestService extends DBBaseService {
 
         // DBへの更新
         try {
-            $userAccountResetData = $this->transaction($this->dbConnection, function($dbConnection) use($userAccount) {
+            // Daoの初期化
+            $systemSettingDao = new SystemSettingDao($this->dbConnection);
+            // パスワードリセット有効期限（N分）
+            $passwordResetExpiredMinutes = (int) $systemSettingDao->getFromCacheBySystemCode('PASSWORD_RESET_EXPIRED_MINUTES')['system_value'];
+
+            $userAccountResetData = $this->transaction($this->dbConnection, function($dbConnection) use($userAccount, $passwordResetExpiredMinutes) {
 
                 // Daoの初期化
                 $userDao = new UserDao($dbConnection);
@@ -81,7 +88,7 @@ class PasswordChangeRequestService extends DBBaseService {
                 $userRecord = $userDao->selectByUserAccount($userAccount);
 
                 // アカウント存在チェック
-                if ($userRecord === null || (bool) $userRecord['delete_flag']) {
+                if ($userRecord === null) {
                     // アカウントが存在しない場合は何もせず処理を終了する
                     // （ここでエラーメッセージを通知すると、不正アクセス者にアカウントの存在が認知されるのを防ぐため、正常かエラーかを分からないようにする）
                     $this->logger->alert("PasswordChangeRequest {$userAccount} がuserテーブルに存在しない");
@@ -91,12 +98,21 @@ class PasswordChangeRequestService extends DBBaseService {
                 // ユーザーアカウントリセット情報を登録する
                 $userAccountResetData = $this->insertUserAccountResetDao($userAccountResetDao, $userRecord);
 
+                // 現時点からの期限切れ時間を計算して古いデータを削除する
+                $expiredDate = DateUtil::getSystemDate();
+                $expiredDate->sub(new DateInterval('PT' . $passwordResetExpiredMinutes . 'M'));
+                $userAccountResetDao->deleteByExpiredDate($expiredDate);
+
                 return $userAccountResetData;
             });
 
             if ($userAccountResetData !== null) {
+                // 期限切れ時間の計算
+                $expiredDate = DateUtil::createDateTime($userAccountResetData['create_datetime']);
+                $expiredDate->add(new DateInterval('PT' . $passwordResetExpiredMinutes . 'M'));
+
                 // アカウントリセット情報を登録できた場合にのみメールを送信する
-                $this->sendMailForPasswordChangeRequest($uri, $userAccount, $userAccountResetData);
+                $this->sendMailForPasswordChangeRequest($uri, $expiredDate, $userAccount, $userAccountResetData);
             }
         } catch (DBException $ex) {
 
@@ -116,13 +132,12 @@ class PasswordChangeRequestService extends DBBaseService {
         $data = [];
 
         $data['account_reset_uri'] = GuidUtil::generateGuid();
-        $data['user_id'] = $userRecord['id'];
+        $data['user_id'] = $userRecord['user_id'];
         $data['auth_code'] = RandomUtil::generateRandomNumber(6);
         $data['create_datetime'] = $this->systemDate->format(DateUtil::DATETIME_HYPHEN_MICRO_FORMAT_COMMON);
         $data['create_user_id'] = 0;
         $data['update_datetime'] = $this->systemDate->format(DateUtil::DATETIME_HYPHEN_MICRO_FORMAT_COMMON);
         $data['update_user_id'] = 0;
-        $data['delete_flag'] = 0;
 
         // 登録クエリ発行
         $userAccountResetDao->insert($data);
@@ -149,10 +164,11 @@ class PasswordChangeRequestService extends DBBaseService {
     /**
      * パスワード変更リクエストのメール送信処理。
      * @param UriInterface $uri URI
+     * @param \DateTime $expiredDate 有効期限切れ日時
      * @param string $userAccount ユーザーアカウント
      * @param array $userAccountResetData ユーザーアカウントリセット情報
      */
-    private function sendMailForPasswordChangeRequest($uri, $userAccount, $userAccountResetData) {
+    private function sendMailForPasswordChangeRequest($uri, \DateTime $expiredDate, $userAccount, $userAccountResetData) {
 
         // パスワード変更URLを生成する
         $passwordChangeUrl = $this->createPasswordChangeUrl($uri, $userAccount, $userAccountResetData['account_reset_uri']);
@@ -165,7 +181,7 @@ class PasswordChangeRequestService extends DBBaseService {
                 [
                     'passwordChangeUrl' => $passwordChangeUrl,
                     'authCode' => $userAccountResetData['auth_code'],
-                    'expiredDate' => $userAccountResetData['create_datetime'],
+                    'expiredDate' => $expiredDate->format(DateUtil::DATETIME_FORMAT_COMMON),
                 ],
                 [
                     ['address' => $userAccount, 'name' => $userAccount]

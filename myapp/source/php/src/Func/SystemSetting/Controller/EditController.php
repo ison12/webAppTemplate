@@ -42,12 +42,12 @@ class EditController extends BaseController {
         $params = $this->getRequestParams();
         $data = null;
 
-        if (!isset($params['id'])) {
+        if (!isset($params['system_code'])) {
             // 新規登録時
             $data = [
                 'isNew' => true,
                 'data' => [
-                    'id' => null
+                      'system_code_last' => null
                     , 'system_code' => null
                     , 'system_name' => null
                     , 'system_value' => null
@@ -57,7 +57,6 @@ class EditController extends BaseController {
                     , 'update_datetime' => null
                     , 'update_user_id' => null
                     , 'update_user_name' => null
-                    , 'delete_flag' => null
                 ],
                 'errors' => [],
             ];
@@ -70,7 +69,9 @@ class EditController extends BaseController {
         try {
             // データを取得する
             $service = new SystemSettingSearchService();
-            $record = $service->findById($params['id']);
+            $record = $service->findBySystemCode($params['system_code']);
+            // 取得時のシステムコードを保持しておく
+            $record['system_code_last'] = $record['system_code'];
 
             // データを返却する
             $data = [
@@ -83,7 +84,7 @@ class EditController extends BaseController {
             // エラーが発生した場合は、エラーメッセージを返却
             $data = [
                 'isNew' => false,
-                'data' => ['id' => $params['id']],
+                'data' => ['system_code' => $params['system_code']],
                 'errors' => $ex->getErrors(),
             ];
         }

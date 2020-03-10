@@ -17,10 +17,6 @@
             <!-- 検索条件 -->
             <form class="searchcondition">
                 <div class="form-group row">
-                    <div class="col-2"><label class="col-form-label">ID</label></div>
-                    <div class="col-3">
-                        <input type="text" class="form-control inline-block" v-model="condition.id">
-                    </div>
                     <div class="col-2"><label class="col-form-label">コード</label></div>
                     <div class="col-3">
                         <input type="text" class="form-control inline-block" v-model="condition.system_code">
@@ -103,7 +99,6 @@
                     <thead>
                         <tr>
                             <th style="width: 100px;"></th>
-                            <th style="width: 80px;">ID</th>
                             <th>コード<br>名称</th>
                             <th>値</th>
                             <th style="width: 210px;">
@@ -117,9 +112,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(rec, index) in list" v-bind:class="{'selected': rec.id === selectedId}">
-                            <td><a v-bind:href="AppContext.baseUrl + '/systemSetting/edit?id=' + rec.id" class="btn btn-primary btn-sm"><span class="oi oi-pencil"></span> 編集</a></td>
-                            <td>{{rec.id}}</td>
+                        <tr v-for="(rec, index) in list" v-bind:class="{'selected': rec.system_code === selectedId}">
+                            <td><a v-bind:href="AppContext.baseUrl + '/systemSetting/edit?system_code=' + rec.system_code" class="btn btn-primary btn-sm"><span class="oi oi-pencil"></span> 編集</a></td>
                             <td>
                                 {{rec.system_code}}<br>
                                 {{rec.system_name}}

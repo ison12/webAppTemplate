@@ -40,15 +40,13 @@ class SystemSettingDao extends BaseDao {
         // SELECTクエリ
         $querySelect = DBFactory::createSelect()
                 ->column(...[
-                    'id',
                     'system_code',
                     'system_name',
                     'system_value',
                     new DBRawValue(["DATE_FORMAT(" . 'create_datetime' . ", '%Y/%m/%d %H:%i:%S.%f')", 'create_datetime']),
                     'create_user_id',
                     new DBRawValue(["DATE_FORMAT(" . 'update_datetime' . ", '%Y/%m/%d %H:%i:%S.%f')", 'update_datetime']),
-                    'update_user_id',
-                    'delete_flag',
+                    'update_user_id'
                 ])
                 ->from('system_setting')
                 ->orderByAsc('system_code')
@@ -92,31 +90,26 @@ class SystemSettingDao extends BaseDao {
 
     /**
      * 主キーでレコードを取得する。
-     * @param string $id ID
-     * @param bool $isDelete 論理削除対象有無(true：対象）
+     * @param string $systemCode システムコード
      * @param bool $isLock ロック有無
      * @return array レコード
      */
-    public function selectById(string $id, bool $isDelete = false, bool $isLock = false): ?array {
+    public function selectBySystemCode(string $systemCode, bool $isLock = false): ?array {
 
         // SELECTクエリ
         $querySelect = DBFactory::createSelect()
                 ->column(...[
-                    'id',
                     'system_code',
                     'system_name',
                     'system_value',
                     new DBRawValue(["DATE_FORMAT(" . 'create_datetime' . ", '%Y/%m/%d %H:%i:%S.%f')", 'create_datetime']),
                     'create_user_id',
                     new DBRawValue(["DATE_FORMAT(" . 'update_datetime' . ", '%Y/%m/%d %H:%i:%S.%f')", 'update_datetime']),
-                    'update_user_id',
-                    'delete_flag',
+                    'update_user_id'
                 ])
                 ->from('system_setting')
                 ->where()
-                ->condition('id', '=', $id)
-                ->_and()
-                ->condition('delete_flag', '=', (int) $isDelete);
+                ->condition('system_code', '=', $systemCode);
 
         if ($isLock) {
             $querySelect->lock();
@@ -137,7 +130,6 @@ class SystemSettingDao extends BaseDao {
     /**
      * レコードを登録する。
      * @param array $data データ
-     * @return mixed ID
      */
     public function insert(array $data) {
 
@@ -150,7 +142,6 @@ class SystemSettingDao extends BaseDao {
             , 'create_user_id'
             , 'update_datetime'
             , 'update_user_id'
-            , 'delete_flag'
         ])->value(...[
             [
                 $data['system_code'],
@@ -159,8 +150,7 @@ class SystemSettingDao extends BaseDao {
                 $data['create_datetime'],
                 $data['create_user_id'],
                 $data['update_datetime'],
-                $data['update_user_id'],
-                $data['delete_flag']
+                $data['update_user_id']
             ]
         ]);
 
@@ -170,16 +160,15 @@ class SystemSettingDao extends BaseDao {
 
         $this->dbConnection->queryAction($sql, $sqlParams);
         $this->clearCache();
-
-        return (int) $this->dbConnection->lastInsertId();
     }
 
     /**
      * レコードを更新する。
      * @param array $data データ
+     * @param string $systemCode システムコード
      * @return int 件数
      */
-    public function update(array $data): int {
+    public function update(array $data, string $systemCode): int {
 
         $update = DBFactory::createUpdate();
         $update
@@ -190,7 +179,7 @@ class SystemSettingDao extends BaseDao {
                 ->set('update_datetime', $data['update_datetime'])
                 ->set('update_user_id', $data['update_user_id'])
                 ->where()
-                ->condition('id', '=', $data['id'])
+                ->condition('system_code', '=', $systemCode)
         ;
 
         $sql = '';
@@ -205,16 +194,16 @@ class SystemSettingDao extends BaseDao {
 
     /**
      * レコードを削除する。
-     * @param array $data データ
+     * @param string $systemCode システムコード
      * @return int 件数
      */
-    public function delete(array $data): int {
+    public function delete(string $systemCode): int {
 
         $delete = DBFactory::createDelete();
         $delete
                 ->from('system_setting')
                 ->where()
-                ->condition('id', '=', $data['id'])
+                ->condition('system_code', '=', $systemCode)
         ;
 
         $sql = '';
@@ -229,11 +218,11 @@ class SystemSettingDao extends BaseDao {
 
     /**
      * 主キーでレコードを取得する。
-     * @param string $id ID
+     * @param string $systemCode システムコード
      * @param bool $isLock ロック有無
      * @return array レコード
      */
-    public function selectLinkedUserAccoutById(string $id, bool $isLock = false): array {
+    public function selectLinkedUserAccoutBySystemCode(string $systemCode, bool $isLock = false): array {
 
         $forUpdate = '';
         if ($isLock) {
@@ -242,8 +231,7 @@ class SystemSettingDao extends BaseDao {
 
         $sql = <<<EOT
 SELECT
-    ss.id
-  , ss.system_code
+    ss.system_code
   , ss.system_name
   , ss.system_value
   , DATE_FORMAT(ss.create_datetime, '%Y/%m/%d %H:%i:%S.%f') create_datetime
@@ -252,17 +240,15 @@ SELECT
   , DATE_FORMAT(ss.update_datetime, '%Y/%m/%d %H:%i:%S.%f') update_datetime
   , ss.update_user_id
   , uu.user_account update_user_name
-  , ss.delete_flag
 FROM
     system_setting ss
-        LEFT JOIN user uc ON ss.create_user_id = uc.id AND uc.delete_flag = 0
-        LEFT JOIN user uu ON ss.update_user_id = uu.id AND uu.delete_flag = 0
+        LEFT JOIN user uc ON ss.create_user_id = uc.user_id
+        LEFT JOIN user uu ON ss.update_user_id = uu.user_id
 WHERE
-    ss.id = ?
-AND ss.delete_flag = 0
+    ss.system_code = ?
 {$forUpdate}
 EOT;
-        $sqlParams = [$id];
+        $sqlParams = [$systemCode];
 
         return $this->dbConnection->queryFetch($sql, $sqlParams);
     }
@@ -285,8 +271,7 @@ EOT;
             $column = '      COUNT(1) count';
         } else {
             $column = <<<EOT
-      ss.id
-    , ss.system_code
+      ss.system_code
     , ss.system_name
     , ss.system_value
     , ss.create_datetime
@@ -295,7 +280,6 @@ EOT;
     , ss.update_datetime
     , ss.update_user_id
     , uu.user_account update_user_name
-    , ss.delete_flag
 EOT;
         }
 
@@ -306,13 +290,6 @@ EOT;
         $params = [];
 
         $columnName = null;
-
-        // idで絞り込み
-        $columnName = 'id';
-        if (!ValUtil::isEmptyElementOfArray($condition, $columnName)) {
-            $where = ValUtil::prependConcat($where, ' AND ', "ss.$columnName = ?");
-            $params[] = $condition[$columnName];
-        }
 
         // システム設定コードで絞り込み
         $columnName = 'system_code';
@@ -389,8 +366,6 @@ EOT;
             }
         }
 
-        $where = ValUtil::prependConcat($where, ' AND ', "ss." . 'delete_flag' . " = 0");
-
         $where = ValUtil::prependHead($where, ' WHERE ');
 
         /*
@@ -398,7 +373,7 @@ EOT;
          */
         $orderBy = '';
         if (!$getCount) {
-            $orderBy = "ss." . 'id';
+            $orderBy = "ss." . 'system_code';
             $orderBy = ValUtil::prependHead($orderBy, 'ORDER BY ');
         }
 
@@ -422,8 +397,8 @@ SELECT
 {$column}
 FROM
     system_setting ss
-        LEFT JOIN user uc ON ss.create_user_id = uc.id AND uc.delete_flag = 0
-        LEFT JOIN user uu ON ss.update_user_id = uu.id AND uu.delete_flag = 0
+        LEFT JOIN user uc ON ss.create_user_id = uc.user_id
+        LEFT JOIN user uu ON ss.update_user_id = uu.user_id
 {$where}
 {$orderBy}
 {$limit}{$offset}

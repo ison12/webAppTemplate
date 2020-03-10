@@ -93,14 +93,14 @@ class SystemSettingEditService extends DBBaseService {
 
                 // レコードの存在チェックを実施する
                 $selectRecord = null;
-                if (!ValUtil::isEmpty($data['id'])) {
+                if (!ValUtil::isEmpty($data['system_code_last'])) {
                     // ID値が設定されている場合、レコードを取得する
-                    $selectRecord = $systemDao->selectById($data['id'], false, true);
+                    $selectRecord = $systemDao->selectBySystemCode($data['system_code_last'], true);
                     if ($selectRecord === null) {
                         // レコードが存在しない場合
                         $error = Validatation::createError(
                                         'error_data_not_found'
-                                        , $this->errorMessage->get('error_data_not_found', ['%itemName%' => 'システム設定', '%id%' => $data['id']]));
+                                        , $this->errorMessage->get('error_data_not_found', ['%itemName%' => 'システム設定', '%id%' => $data['system_code_last']]));
                         throw new ServiceException([$error]);
                     }
                 }
@@ -156,7 +156,7 @@ class SystemSettingEditService extends DBBaseService {
                 $systemDao = new SystemSettingDao($dbConnection);
 
                 // レコードの存在チェックを実施する
-                $selectRecord = $systemDao->selectById($data['id'], false, true);
+                $selectRecord = $systemDao->selectBySystemCode($data['system_code'], true);
 
                 if ($selectRecord !== null) {
                     // レコードが存在する場合、削除する
@@ -198,13 +198,12 @@ class SystemSettingEditService extends DBBaseService {
 
         // 登録クエリ発行
         $data['create_datetime'] = $this->systemDate->format(DateUtil::DATETIME_HYPHEN_MICRO_FORMAT_COMMON);
-        $data['create_user_id'] = $user->id ?? 0;
+        $data['create_user_id'] = $user->user_id ?? 0;
         $data['update_datetime'] = $this->systemDate->format(DateUtil::DATETIME_HYPHEN_MICRO_FORMAT_COMMON);
-        $data['update_user_id'] = $user->id ?? 0;
+        $data['update_user_id'] = $user->user_id ?? 0;
         $data['delete_flag'] = 0;
 
-        $id = $systemDao->insert($data);
-        $data['id'] = $id;
+        $systemDao->insert($data);
 
         return $data;
     }
@@ -220,8 +219,8 @@ class SystemSettingEditService extends DBBaseService {
 
         // 更新クエリ発行
         $data['update_datetime'] = $this->systemDate->format(DateUtil::DATETIME_HYPHEN_MICRO_FORMAT_COMMON);
-        $data['update_user_id'] = $user->id ?? 0;
-        $systemDao->update($data);
+        $data['update_user_id'] = $user->user_id ?? 0;
+        $systemDao->update($data, $data['system_code_last']);
 
         return $data;
     }
@@ -235,7 +234,7 @@ class SystemSettingEditService extends DBBaseService {
     private function saveForDelete(SystemSettingDao $systemDao, array $data, User $user = null) {
 
         // 更新クエリ発行
-        $systemDao->delete($data);
+        $systemDao->delete($data['system_code_last']);
     }
 
 }

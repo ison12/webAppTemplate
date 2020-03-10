@@ -7,7 +7,7 @@ namespace App\Common\Data;
  */
 class User {
 
-    public $id;
+    public $user_id;
     public $user_account;
     public $authority;
 

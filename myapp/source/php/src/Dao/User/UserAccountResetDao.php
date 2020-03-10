@@ -36,8 +36,7 @@ class UserAccountResetDao extends BaseDao {
             'create_datetime',
             'create_user_id',
             'update_datetime',
-            'update_user_id',
-            'delete_flag'
+            'update_user_id'
         ])->value(...[
             [
                 $data['account_reset_uri'],
@@ -46,8 +45,7 @@ class UserAccountResetDao extends BaseDao {
                 $data['create_datetime'],
                 $data['create_user_id'],
                 $data['update_datetime'],
-                $data['update_user_id'],
-                $data['delete_flag']
+                $data['update_user_id']
             ]
         ]);
 

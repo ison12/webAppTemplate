@@ -7,6 +7,7 @@ use App\Common\Exception\ServiceException;
 use App\Common\Util\DateUtil;
 use App\Common\Util\UrlUtil;
 use App\Common\Validation\Validatation;
+use App\Dao\SystemSetting\SystemSettingDao;
 use App\Dao\User\UserAccessDao;
 use App\Dao\User\UserAccountResetDao;
 use App\Dao\User\UserDao;
@@ -101,10 +102,11 @@ class PasswordChangeService extends DBBaseService {
     public function validateData(array $data) {
 
         // ユーザーアカウントリセットのURI
-        $id = $data['id'] ?? null;
+        $accountResetUri = $data['id'] ?? null;
 
+        $systemSettingDao = new SystemSettingDao($this->dbConnection);
         $userAccountResetDao = new UserAccountResetDao($this->dbConnection);
-        $userAccountResetRecord = $this->selectUserAccountReset($userAccountResetDao, $id);
+        $userAccountResetRecord = $this->selectUserAccountReset($systemSettingDao, $userAccountResetDao, $accountResetUri);
 
         if ($userAccountResetRecord === null) {
             return false;
@@ -130,6 +132,7 @@ class PasswordChangeService extends DBBaseService {
             $this->transaction($this->dbConnection, function($dbConnection) use($data) {
 
                 // Daoの初期化
+                $systemSettingDao = new SystemSettingDao($dbConnection);
                 $userDao = new UserDao($dbConnection);
                 $userAccessDao = new UserAccessDao($dbConnection);
                 $userAccountResetDao = new UserAccountResetDao($dbConnection);
@@ -139,7 +142,7 @@ class PasswordChangeService extends DBBaseService {
                 $userRecord = $userDao->selectByUserAccount($userAccount, true);
 
                 // アカウント存在チェック
-                if ($userRecord === null || (bool) $userRecord['delete_flag']) {
+                if ($userRecord === null) {
                     // アカウントが存在しない場合
                     $this->throwDataNotFound('ユーザー', $data['user_account']);
                 }
@@ -148,7 +151,7 @@ class PasswordChangeService extends DBBaseService {
                 $accountResetUri = $data['id'] ?? null;
 
                 // ユーザーアカウントリセット情報の取得
-                $userAccountResetRecord = $this->selectUserAccountReset($userAccountResetDao, $accountResetUri);
+                $userAccountResetRecord = $this->selectUserAccountReset($systemSettingDao, $userAccountResetDao, $accountResetUri);
                 if ($userAccountResetRecord === null) {
                     $this->throwDataNotFound('ユーザーアカウントリセット', $accountResetUri);
                 }
@@ -160,9 +163,9 @@ class PasswordChangeService extends DBBaseService {
                 }
 
                 // 新しいパスワードで更新する
-                $this->updateUserPassword($userDao, $userRecord['id'], $data['password']);
+                $this->updateUserPassword($userDao, $userRecord['user_id'], $data['password']);
                 // ユーザーアクセス情報をリセットする
-                $this->updateUserAccess($userAccessDao, $userRecord['id']);
+                $this->updateUserAccess($userAccessDao, $userRecord['user_id']);
                 // ユーザーアカウントリセット情報を削除する
                 $userAccountResetDao->deleteByAccountResetUri($accountResetUri);
             });
@@ -178,14 +181,15 @@ class PasswordChangeService extends DBBaseService {
 
     /**
      * ユーザーアカウントリセット情報を取得する。
+     * @param SystemSettingDao $systemSettingDao システム設定Dao
      * @param UserAccountResetDao $userAccountResetDao ユーザーアカウントリセットDAO
-     * @param string $id ユーザーアカウントリセットのURI
+     * @param string $accountResetUri ユーザーアカウントリセットのURI
      * @return ?array レコード
      */
-    private function selectUserAccountReset(UserAccountResetDao $userAccountResetDao, string $id): ?array {
+    private function selectUserAccountReset(SystemSettingDao $systemSettingDao, UserAccountResetDao $userAccountResetDao, string $accountResetUri): ?array {
 
         // ユーザーアカウントリセットのURI
-        if ($id === null) {
+        if ($accountResetUri === null) {
             return null;
         }
 
@@ -194,16 +198,19 @@ class PasswordChangeService extends DBBaseService {
 
         // ユーザーアカウントリセット情報を取得する
         $userAccountResetDao = new UserAccountResetDao($this->dbConnection);
-        $userAccountResetRecord = $userAccountResetDao->selectByAccountResetUri($id);
+        $userAccountResetRecord = $userAccountResetDao->selectByAccountResetUri($accountResetUri);
 
         // レコード存在チェック
-        if ($userAccountResetRecord === null || (isset($userAccountResetRecord['delete_flag']) && (bool) $userAccountResetRecord['delete_flag'])) {
+        if ($userAccountResetRecord === null) {
             // レコードが存在しない
             return null;
         }
 
+        // パスワードリセット有効期限（N分）
+        $passwordResetExpiredMinutes = (int) $systemSettingDao->getFromCacheBySystemCode('PASSWORD_RESET_EXPIRED_MINUTES')['system_value'];
+
         $createDatetime = DateUtil::createDateTime($userAccountResetRecord['create_datetime']);
-        if ($createDatetime < $systemDate->sub(new DateInterval('PT' . '30' . 'M'))) {
+        if ($createDatetime < $systemDate->sub(new DateInterval('PT' . $passwordResetExpiredMinutes . 'M'))) {
             // 時間切れの場合
             return null;
         }
@@ -225,7 +232,7 @@ class PasswordChangeService extends DBBaseService {
         // ユーザーアクセス情報を更新する
         $updateCount = 0;
         $updateCount = $userDao->updatePassword([
-            'id' => $userId,
+            'user_id' => $userId,
             'password' => $password,
             'update_datetime' => $this->systemDate->format(DateUtil::DATETIME_HYPHEN_FORMAT_COMMON),
             'update_user_id' => 0
@@ -260,7 +267,7 @@ class PasswordChangeService extends DBBaseService {
         // ユーザーアクセス情報を更新する
         $updateCount = 0;
         $updateCount = $userAccessDao->updateAccessForClearAuthFailed([
-            'id' => $userId,
+            'user_id' => $userId,
             'update_datetime' => $this->systemDate->format(DateUtil::DATETIME_HYPHEN_FORMAT_COMMON),
             'update_user_id' => 0
         ]);

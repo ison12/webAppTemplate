@@ -36,18 +36,16 @@ class UserAccessDao extends BaseDao {
             , 'create_user_id'
             , 'update_datetime'
             , 'update_user_id'
-            , 'delete_flag'
         ])->value(...[
             [
-                $data['id'],
+                $data['user_id'],
                 null,
                 0,
                 null,
                 $data['create_datetime'],
                 $data['create_user_id'],
                 $data['update_datetime'],
-                $data['update_user_id'],
-                $data['delete_flag']
+                $data['update_user_id']
             ]
         ]);
 
@@ -126,7 +124,7 @@ class UserAccessDao extends BaseDao {
                 ->set('update_datetime', $data['update_datetime'])
                 ->set('update_user_id', $data['update_user_id'])
                 ->where()
-                ->condition('user_id', '=', $data['id'])
+                ->condition('user_id', '=', $data['user_id'])
         ;
 
         $sql = '';
@@ -149,7 +147,7 @@ class UserAccessDao extends BaseDao {
         $delete
                 ->from('user_access')
                 ->where()
-                ->condition('user_id', '=', $data['id'])
+                ->condition('user_id', '=', $data['user_id'])
         ;
 
         $sql = '';

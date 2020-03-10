@@ -23,16 +23,16 @@ class UserDao extends BaseDao {
 
     /**
      * 主キーでレコードを取得する。
-     * @param string $id ID
+     * @param string $userId ユーザーID
      * @param bool $isLock ロック有無
      * @return array レコード
      */
-    public function selectById(string $id, bool $isLock = false) {
+    public function selectById(string $userId, bool $isLock = false) {
 
         // SELECTクエリ
         $querySelect = DBFactory::createSelect()
                 ->column(...[
-                    'id',
+                    'user_id',
                     'user_account',
                     'password',
                     'email',
@@ -47,9 +47,7 @@ class UserDao extends BaseDao {
                 ])
                 ->from('user')
                 ->where()
-                ->condition('id', '=', $id)
-                ->_and()
-                ->condition('delete_flag', '=', false);
+                ->condition('user_id', '=', $userId);
 
         if ($isLock) {
             $querySelect->lock();
@@ -85,8 +83,7 @@ class UserDao extends BaseDao {
             'create_datetime',
             'create_user_id',
             'update_datetime',
-            'update_user_id',
-            'delete_flag'
+            'update_user_id'
         ])->value(...[
             [
                 $data['user_account']
@@ -99,7 +96,6 @@ class UserDao extends BaseDao {
                 , $data['create_user_id']
                 , $data['update_datetime']
                 , $data['update_user_id']
-                , $data['delete_flag']
             ]
         ]);
 
@@ -130,7 +126,7 @@ class UserDao extends BaseDao {
                 ->set('update_datetime', $data['update_datetime'])
                 ->set('update_user_id', $data['update_user_id'])
                 ->where()
-                ->condition('id', '=', $data['id'])
+                ->condition('user_id', '=', $data['user_id'])
         ;
 
         $sql = '';
@@ -154,7 +150,7 @@ class UserDao extends BaseDao {
         $delete
                 ->from('user')
                 ->where()
-                ->condition('id', '=', $data['id'])
+                ->condition('user_id', '=', $data['user_id'])
         ;
 
         $sql = '';
@@ -177,7 +173,7 @@ class UserDao extends BaseDao {
         // SELECTクエリ
         $querySelect = DBFactory::createSelect()
                 ->column(...[
-                    'id',
+                    'user_id',
                     'user_account',
                     'password',
                     'email',
@@ -187,8 +183,7 @@ class UserDao extends BaseDao {
                     new DBRawValue(["DATE_FORMAT(" . 'create_datetime' . ", '%Y/%m/%d %H:%i:%S.%f')", 'create_datetime']),
                     'create_user_id',
                     new DBRawValue(["DATE_FORMAT(" . 'update_datetime' . ", '%Y/%m/%d %H:%i:%S.%f')", 'update_datetime']),
-                    'update_user_id',
-                    'delete_flag'
+                    'update_user_id'
                 ])
                 ->from('user')
                 ->where()
@@ -225,7 +220,7 @@ class UserDao extends BaseDao {
                 ->set('update_datetime', $data['update_datetime'])
                 ->set('update_user_id', $data['update_user_id'])
                 ->where()
-                ->condition('id', '=', $data['id'])
+                ->condition('user_id', '=', $data['user_id'])
         ;
 
         $sql = '';

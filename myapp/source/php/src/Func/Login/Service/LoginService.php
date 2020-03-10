@@ -107,7 +107,7 @@ class LoginService extends DBBaseService {
                     }
 
                     // ユーザアクセス情報を更新する。
-                    $this->updateUserAccess($systemSettingDao, $userAccessDao, $userRecord['id'], $authSuccess);
+                    $this->updateUserAccess($systemSettingDao, $userAccessDao, $userRecord['user_id'], $authSuccess);
 
                     if (!$authSuccess) {
                         $this->throwInvalidAuthException();
@@ -139,7 +139,7 @@ class LoginService extends DBBaseService {
     private function createUser($user) {
 
         $userObj = new User();
-        $userObj->id = $user['id'];
+        $userObj->user_id = $user['user_id'];
         $userObj->user_account = $user['user_account'];
         $userObj->user_name = $user['user_name'];
         $userObj->user_name_kana = $user['user_name_kana'];

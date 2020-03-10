@@ -21,20 +21,20 @@ class SystemSettingSearchService extends DBBaseService {
 
     /**
      * IDからレコードを取得する処理。
-     * @param string $id ID
+     * @param string $systemCode システムコード
      * @return array レコード
      */
-    public function findById(string $id): array {
+    public function findBySystemCode(string $systemCode): array {
 
         $systemDao = new SystemSettingDao($this->dbConnection);
 
-        $records = $systemDao->selectLinkedUserAccoutById($id);
+        $records = $systemDao->selectLinkedUserAccoutBySystemCode($systemCode);
         if (count($records) !== 1) {
             // データが見つからなかった場合
             // エラーデータを生成し例外を送出する
             $error = Validatation::createError(
                             'error_data_not_found'
-                            , $this->errorMessage->get('error_data_not_found', ['%itemName%' => 'システム設定', '%id%' => $id]));
+                            , $this->errorMessage->get('error_data_not_found', ['%itemName%' => 'システム設定', '%id%' => $systemCode]));
             throw new ServiceException([$error]);
         }
 

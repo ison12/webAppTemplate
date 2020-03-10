@@ -62,9 +62,9 @@ class UserService extends BaseService {
 
         // 登録クエリ発行
         $data[ConstTUser::CREATE_DATETIME] = $systemDate->format(DateUtil::DATETIME_HYPHEN_MICRO_FORMAT_COMMON);
-        $data[ConstTUser::CREATE_USER_ID] = $user->id ?? 0;
+        $data[ConstTUser::CREATE_USER_ID] = $user->user_id ?? 0;
         $data[ConstTUser::UPDATE_DATETIME] = $systemDate->format(DateUtil::DATETIME_HYPHEN_MICRO_FORMAT_COMMON);
-        $data[ConstTUser::UPDATE_USER_ID] = $user->id ?? 0;
+        $data[ConstTUser::UPDATE_USER_ID] = $user->user_id ?? 0;
         $data[ConstTUser::DELETE_FLAG] = 0;
 
         $id = $userDao->insert($data);
@@ -92,7 +92,7 @@ class UserService extends BaseService {
 
         // 更新クエリ発行
         $data[ConstTUser::UPDATE_DATETIME] = $systemDate->format(DateUtil::DATETIME_HYPHEN_MICRO_FORMAT_COMMON);
-        $data[ConstTUser::UPDATE_USER_ID] = $user->id ?? 0;
+        $data[ConstTUser::UPDATE_USER_ID] = $user->user_id ?? 0;
 
         $retUser = $userDao->updatePassword($data);
         $retUserAccess = $userAccessDao->updateAccessForClearAuthFailed($data);

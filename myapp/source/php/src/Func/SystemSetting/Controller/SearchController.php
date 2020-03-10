@@ -120,8 +120,7 @@ class SearchController extends BaseController {
 
         $data = [
             'condition' => [
-                'id' => null
-                , 'system_code' => null
+                  'system_code' => null
                 , 'system_name' => null
                 , 'system_value' => null
                 , 'create_user_name' => null

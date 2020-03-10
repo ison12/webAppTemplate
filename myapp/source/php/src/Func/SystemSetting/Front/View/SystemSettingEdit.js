@@ -84,7 +84,7 @@ export default {
                 if (data.errors.length <= 0) {
                     // 正常時
                     // 検索画面へ移動する
-                    window.location.href = AppContext.baseUrl + "/systemSetting/search?previousSearch=true&selectedId=" + data.data.id;
+                    window.location.href = AppContext.baseUrl + "/systemSetting/search?previousSearch=true&selectedId=" + data.data.system_code;
                 }
 
             }).catch(function () {
