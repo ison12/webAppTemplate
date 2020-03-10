@@ -1,16 +1,17 @@
 <?php
 
-namespace App\Func\Password\Controller;
+namespace App\Func\User\Controller;
 
 use App\Common\Exception\ServiceException;
 use App\Func\Base\Controller\BaseController;
-use App\Func\Password\Service\PasswordChangeRequestService;
+use App\Func\User\Service\UserRegistService;
 use Slim\App;
+use Slim\Exception\NotFoundException;
 
 /**
- * パスワード変更リクエストコントローラー。
+ * ユーザー登録コントローラー。
  */
-class ChangeRequestController extends BaseController {
+class RegistController extends BaseController {
 
     /**
      * @var bool 認証を要するかどうかのフラグ、true：要認証、false、不要
@@ -30,7 +31,15 @@ class ChangeRequestController extends BaseController {
      */
     public function actionIndex() {
 
-        return $this->render('/Func/Password/Front/View/PasswordChangeRequest', []);
+        $params = $this->getRequestParams();
+
+        $service = new UserRegistService();
+        if (!$service->validateData($params ?? [])) {
+            // データが無効なので404ページエラーを返却する
+            throw new NotFoundException($this->container->request, $this->container->response);
+        }
+
+        return $this->render('/Func/User/Front/View/UserRegist', []);
     }
 
     /**
@@ -50,8 +59,8 @@ class ChangeRequestController extends BaseController {
         $params = $this->getRequestParams();
 
         try {
-            $service = new PasswordChangeRequestService();
-            $service->changeRequest($params['data'], $this->container->request->getUri());
+            $service = new UserRegistService();
+            $service->regist($params['data'], $this->container->request->getUri());
 
             // データを返却する
             $data = [
@@ -78,7 +87,13 @@ class ChangeRequestController extends BaseController {
 
         $data = [
             'data' => [
+                'id' => $params['id'] ?? null,
                 'user_account' => $params['user_account'] ?? null,
+                'auth_code' => null,
+                'user_name' => null,
+                'user_name_kana' => null,
+                'password' => null,
+                'password_confirm' => null,
             ],
             'errors' => [],
             'errorsOnBoard' => [],

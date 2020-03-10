@@ -43,6 +43,7 @@
                 <template v-if='buttonsSet !== null'>
                     <button type="button"
                             class="btn btn-primary"
+                            v-bind:class="positiveButtonClass"
                             v-on:click="onClickPositive">{{buttonsSet.positive.text}}</button>
                     <button type="button"
                             class="btn btn-secondary"

@@ -1,0 +1,13 @@
+.user-regist-component {
+
+}
+
+.user-regist-component .form-signin {
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto;
+}
+
+.user-regist-component .form-group {
+    margin-bottom: .5rem;
+}

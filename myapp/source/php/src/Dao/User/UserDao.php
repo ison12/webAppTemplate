@@ -87,7 +87,7 @@ class UserDao extends BaseDao {
         ])->value(...[
             [
                 $data['user_account']
-                , encrypt_util::hash($data['password'])
+                , EncryptUtil::hash($data['password'])
                 , $data['email']
                 , $data['user_name']
                 , $data['user_name_kana']
@@ -141,16 +141,16 @@ class UserDao extends BaseDao {
 
     /**
      * レコードを削除する。
-     * @param array $data データ
+     * @param string $userId ユーザーID
      * @return int 件数
      */
-    public function delete(array $data): int {
+    public function delete($userId): int {
 
         $delete = DBFactory::createDelete();
         $delete
                 ->from('user')
                 ->where()
-                ->condition('user_id', '=', $data['user_id'])
+                ->condition('user_id', '=', $userId)
         ;
 
         $sql = '';

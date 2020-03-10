@@ -53,6 +53,12 @@ Vue.component("PasswordChangeRequestComponent", PasswordChangeRequestComponent);
 import PasswordChangeComponent from 'Func/Password/Front/View/PasswordChange.vue';
 Vue.component("PasswordChangeComponent", PasswordChangeComponent);
 
+import UserRegistRequestComponent from 'Func/User/Front/View/UserRegistRequest.vue';
+Vue.component("UserRegistRequestComponent", UserRegistRequestComponent);
+
+import UserRegistComponent from 'Func/User/Front/View/UserRegist.vue';
+Vue.component("UserRegistComponent", UserRegistComponent);
+
 import TopComponent from 'Func/Top/Front/View/Top.vue';
 Vue.component("TopComponent", TopComponent);
 

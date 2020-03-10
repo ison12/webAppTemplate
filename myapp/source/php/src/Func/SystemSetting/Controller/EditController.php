@@ -27,6 +27,9 @@ class EditController extends BaseController {
      */
     public function actionIndex() {
 
+        // 管理者のみアクセス可能なページのためチェックを実施する
+        $this->invalidAccessIfDeneiedUser();
+
         return $this->render('/Func/SystemSetting/Front/View/SystemSettingEdit', []);
     }
 
@@ -38,6 +41,9 @@ class EditController extends BaseController {
      * ・編集
      */
     public function actionLoad() {
+
+        // 管理者のみアクセス可能なページのためチェックを実施する
+        $this->invalidAccessIfDeneiedUser();
 
         $params = $this->getRequestParams();
         $data = null;
@@ -97,6 +103,9 @@ class EditController extends BaseController {
      */
     public function actionSave() {
 
+        // 管理者のみアクセス可能なページのためチェックを実施する
+        $this->invalidAccessIfDeneiedUser();
+
         $params = $this->getRequestParams();
 
         try {
@@ -123,6 +132,9 @@ class EditController extends BaseController {
      * 削除処理。
      */
     public function actionDelete() {
+
+        // 管理者のみアクセス可能なページのためチェックを実施する
+        $this->invalidAccessIfDeneiedUser();
 
         $params = $this->getRequestParams();
 

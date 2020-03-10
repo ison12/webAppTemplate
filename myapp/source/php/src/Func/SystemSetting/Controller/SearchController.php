@@ -27,6 +27,9 @@ class SearchController extends BaseController {
      */
     public function actionIndex() {
 
+        // 管理者のみアクセス可能なページのためチェックを実施する
+        $this->invalidAccessIfDeneiedUser();
+
         return $this->render('/Func/SystemSetting/Front/View/SystemSettingSearch', []);
     }
 
@@ -39,6 +42,9 @@ class SearchController extends BaseController {
      * ・最後に検索した内容で検索し検索結果も一緒に返却するパターン
      */
     public function actionLoad() {
+
+        // 管理者のみアクセス可能なページのためチェックを実施する
+        $this->invalidAccessIfDeneiedUser();
 
         $params = $this->getRequestParams();
 
@@ -94,6 +100,9 @@ class SearchController extends BaseController {
      * 検索処理。
      */
     public function actionSearch() {
+
+        // 管理者のみアクセス可能なページのためチェックを実施する
+        $this->invalidAccessIfDeneiedUser();
 
         // リクエストパラメータ
         $params = $this->getRequestParams();

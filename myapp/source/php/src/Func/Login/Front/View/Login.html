@@ -47,6 +47,14 @@
                     </a>
                 </div>
 
+                <div class="form-group">
+                    <a class="btn btn-link btn-block"
+                       v-bind:href="AppContext.baseUrl + '/user/registRequest?user_account=' + castString(data.user_account)"
+                       v-on:click="">
+                        <span class="oi oi-person"></span> ユーザー登録する
+                    </a>
+                </div>
+
             </div>
 
         </div>

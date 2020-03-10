@@ -25,15 +25,18 @@ class CacheClearController extends BaseController {
      */
     public function actionDbCacheClear() {
 
+        // 管理者のみアクセス可能なページのためチェックを実施する
+        $this->invalidAccessIfDeneiedUser();
+
         $ret = [
-            'error' => null
+            'errors' => null
         ];
 
         try {
             $service = new CacheClearService();
             $service->clearDBCache();
         } catch (Exception $exc) {
-            $ret['error'] = $exc->getMessage();
+            $ret['errors'] = $exc->getMessage();
         }
 
         return $this->renderJson($ret);

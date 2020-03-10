@@ -12,6 +12,7 @@ return [
     'validation_signed_numeric' => '%itemName%は符号付きの数値で入力してください。',
     'validation_signed_numeric_length' => '%itemName%は符号付きの数値で入力してください。（整数部 %integerPartLength%桁、小数部 %fractionalPart%桁）',
     'validation_half_char' => '%itemName%は半角文字で入力してください。',
+    'validation_kana_or_half_char' => '%itemName%はカナまたは半角文字で入力してください。',
     'validation_date_time' => '%itemName%は日時形式で入力してください。',
     'validation_url' => '%itemName%はURL形式で入力してください。',
     'validation_email' => '%itemName%はEMail形式で入力してください。',

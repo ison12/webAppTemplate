@@ -82,6 +82,16 @@ class Validatation {
     }
 
     /**
+     * カナ文字または半角文字であるかをチェックする。
+     * @param mixed $value 値
+     * @return bool true 正常、false 異常
+     */
+    public function checkKanaOrHalfChar($value): bool {
+
+        return preg_match("/^[\x20-\x7Eァ-ヴー・　]+$/u", $value);
+    }
+
+    /**
      * 小文字アルファベットであるかをチェックする。
      * @param mixed $value 値
      * @return bool true 正常、false 異常
@@ -511,6 +521,29 @@ class Validatation {
 
         if (!$this->checkHalfChar($value)) {
             $errors[] = self::createError($itemId, $this->messages->get('validation_half_char', array('%itemName%' => $itemName)));
+            $this->invalidate = true;
+        }
+
+        return $this;
+    }
+
+    /**
+     * カナ文字または半角文字チェック。
+     * @param array $errors （戻り値）エラーリスト
+     * @param string $itemId 項目ID
+     * @param string $itemName 項目名称
+     * @param mixed $value 値
+     * @return Validatation 自身のオブジェクト
+     */
+    public function validateKanaOrHalfChar(array &$errors, string $itemId, string $itemName, $value): Validatation {
+
+        if ($this->oneOfTheFollowing && $this->invalidate) {
+            // チェックせずに処理を終了
+            return $this;
+        }
+
+        if (!$this->checkKanaOrHalfChar($value)) {
+            $errors[] = self::createError($itemId, $this->messages->get('validation_kana_or_half_char', array('%itemName%' => $itemName)));
             $this->invalidate = true;
         }
 

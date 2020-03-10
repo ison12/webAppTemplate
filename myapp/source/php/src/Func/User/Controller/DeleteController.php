@@ -1,21 +1,17 @@
 <?php
 
-namespace App\Func\Password\Controller;
+namespace App\Func\User\Controller;
 
 use App\Common\Exception\ServiceException;
+use App\Common\Session\SessionData;
 use App\Func\Base\Controller\BaseController;
-use App\Func\Password\Service\PasswordChangeRequestService;
+use App\Func\User\Service\UserDeleteService;
 use Slim\App;
 
 /**
- * パスワード変更リクエストコントローラー。
+ * ユーザー削除コントローラー。
  */
-class ChangeRequestController extends BaseController {
-
-    /**
-     * @var bool 認証を要するかどうかのフラグ、true：要認証、false、不要
-     */
-    protected $needAuth = false;
+class DeleteController extends BaseController {
 
     /**
      * コンストラクタ。
@@ -26,36 +22,20 @@ class ChangeRequestController extends BaseController {
     }
 
     /**
-     * 表示処理。
-     */
-    public function actionIndex() {
-
-        return $this->render('/Func/Password/Front/View/PasswordChangeRequest', []);
-    }
-
-    /**
-     * ロード処理。
-     */
-    public function actionLoad() {
-
-        $data = $this->createLoadData();
-        return $this->renderJson($data);
-    }
-
-    /**
      * 実行処理。
      */
     public function actionExec() {
 
         $params = $this->getRequestParams();
+        $data = $params['data'] ?? [];
 
         try {
-            $service = new PasswordChangeRequestService();
-            $service->changeRequest($params['data'], $this->container->request->getUri());
+            $service = new UserDeleteService();
+            $service->delete($data, SessionData::getUser(), $this->container->request->getUri());
 
             // データを返却する
             $data = [
-                'data' => $params['data'],
+                'data' => $data,
                 'errors' => [],
             ];
         } catch (ServiceException $ex) {
@@ -78,7 +58,13 @@ class ChangeRequestController extends BaseController {
 
         $data = [
             'data' => [
+                'id' => $params['id'] ?? null,
                 'user_account' => $params['user_account'] ?? null,
+                'auth_code' => null,
+                'user_name' => null,
+                'user_name_kana' => null,
+                'password' => null,
+                'password_confirm' => null,
             ],
             'errors' => [],
             'errorsOnBoard' => [],

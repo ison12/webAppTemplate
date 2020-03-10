@@ -9,9 +9,11 @@ use App\Common\Message\MessageManager;
 use App\Common\ResponseCache\ResponseCache;
 use App\Common\Session\SessionData;
 use App\Common\Util\DBUtil;
+use App\Constant\CommonConstant;
 use App\Func\Login\Service\LoginService;
 use SebastianBergmann\RecursionContext\Exception;
 use Slim\App;
+use Slim\Exception\NotFoundException;
 use Slim\Http\Response;
 use Slim\Http\Stream;
 use const SRC_PATH;
@@ -408,6 +410,22 @@ class BaseController {
                             ->withStatus(500)
                             ->withHeader('Content-Type', 'text/html')
                             ->write($data);
+        }
+    }
+
+    /**
+     * 管理者ではない場合に不正なアクセスのため、ページが見つからないエラーを発生させる。
+     */
+    protected function invalidAccessIfDeneiedUser() {
+
+        $user = SessionData::getUser();
+
+        if ($user->authority !== CommonConstant::AUTH_ADMIN) {
+            // 404エラー
+            $request = $this->container->request;
+            $response = $this->container->response;
+
+            throw new NotFoundException($request, $response);
         }
     }
 

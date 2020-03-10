@@ -1,0 +1,1 @@
+<?= \App\Constant\CommonConstant::APP_NAME ?> 退会の完了

@@ -1,16 +1,17 @@
 <?php
 
-namespace App\Func\Password\Service;
+namespace App\Func\User\Service;
 
 use App\Common\Exception\DBException;
 use App\Common\Exception\ServiceException;
 use App\Common\Util\DateUtil;
 use App\Common\Util\UrlUtil;
 use App\Common\Validation\Validatation;
+use App\Constant\CommonConstant;
 use App\Dao\SystemSetting\SystemSettingDao;
 use App\Dao\User\UserAccessDao;
-use App\Dao\User\UserAccountResetDao;
 use App\Dao\User\UserDao;
+use App\Dao\User\UserTempDao;
 use App\Func\Base\Service\DBBaseService;
 use App\Func\Common\Service\MailService;
 use DateInterval;
@@ -18,9 +19,9 @@ use Psr\Http\Message\UriInterface;
 use Slim\Http\Uri;
 
 /**
- * パスワード変更サービス。
+ * ユーザー登録サービス。
  */
-class PasswordChangeService extends DBBaseService {
+class UserRegistService extends DBBaseService {
 
     /**
      * コンストラクタ。
@@ -30,11 +31,11 @@ class PasswordChangeService extends DBBaseService {
     }
 
     /**
-     * パスワード変更時の入力チェックを実施する。
+     * ユーザー登録時の入力チェックを実施する。
      * @param array $data データ
      * @return array エラーリスト
      */
-    private function validateForChange(array $data): array {
+    private function validateForRegist(array $data): array {
 
         $errors = [];
 
@@ -59,6 +60,27 @@ class PasswordChangeService extends DBBaseService {
                 ->oneOfTheFollowing()
                 ->validateRequired($errors, $itemId, $itemName, $data[$itemId])
                 ->validateLength($errors, $itemId, $itemName, $data[$itemId], 10)
+                ->end()
+        ;
+
+        // ユーザー名
+        $itemId = 'user_name';
+        $itemName = '名前';
+        $validation
+                ->oneOfTheFollowing()
+                ->validateRequired($errors, $itemId, $itemName, $data[$itemId])
+                ->validateLength($errors, $itemId, $itemName, $data[$itemId], 100)
+                ->end()
+        ;
+
+        // ユーザー名カナ
+        $itemId = 'user_name_kana';
+        $itemName = '名前（カナ）';
+        $validation
+                ->oneOfTheFollowing()
+                ->validateRequired($errors, $itemId, $itemName, $data[$itemId])
+                ->validateKanaOrHalfChar($errors, $itemId, $itemName, $data[$itemId])
+                ->validateLength($errors, $itemId, $itemName, $data[$itemId], 100)
                 ->end()
         ;
 
@@ -101,14 +123,14 @@ class PasswordChangeService extends DBBaseService {
      */
     public function validateData(array $data) {
 
-        // ユーザーアカウントリセットのURI
-        $accountResetUri = $data['id'] ?? null;
+        // アカウント登録のURI
+        $userRegistUri = $data['id'] ?? null;
 
         $systemSettingDao = new SystemSettingDao($this->dbConnection);
-        $userAccountResetDao = new UserAccountResetDao($this->dbConnection);
-        $userAccountResetRecord = $this->selectUserAccountReset($systemSettingDao, $userAccountResetDao, $accountResetUri);
+        $userTempDao = new UserTempDao($this->dbConnection);
+        $userTempRecord = $this->selectUserTemp($systemSettingDao, $userTempDao, $userRegistUri);
 
-        if ($userAccountResetRecord === null) {
+        if ($userTempRecord === null) {
             return false;
         }
 
@@ -116,13 +138,13 @@ class PasswordChangeService extends DBBaseService {
     }
 
     /**
-     * パスワード変更処理。
+     * ユーザー登録処理。
      * @param array $data データ
      * @param UriInterface $uri URI
      */
-    public function change(array $data, UriInterface $uri) {
+    public function regist(array $data, UriInterface $uri) {
 
-        $errors = $this->validateForChange($data);
+        $errors = $this->validateForRegist($data);
         if (count($errors) > 0) {
             throw new ServiceException($errors);
         }
@@ -134,44 +156,36 @@ class PasswordChangeService extends DBBaseService {
                 // Daoの初期化
                 $systemSettingDao = new SystemSettingDao($dbConnection);
                 $userDao = new UserDao($dbConnection);
+                $userTempDao = new UserTempDao($dbConnection);
                 $userAccessDao = new UserAccessDao($dbConnection);
-                $userAccountResetDao = new UserAccountResetDao($dbConnection);
 
                 // アカウントを取得する
                 $userAccount = $data['user_account'];
-                $userRecord = $userDao->selectByUserAccount($userAccount, true);
+                // アカウント登録URIの取得
+                $accountRegistUri = $data['id'] ?? null;
 
-                // アカウント存在チェック
-                if ($userRecord === null) {
-                    // アカウントが存在しない場合
-                    $this->throwDataNotFound('ユーザー', $userAccount);
-                }
-
-                // ユーザーアカウントリセットURIの取得
-                $accountResetUri = $data['id'] ?? null;
-
-                // ユーザーアカウントリセット情報の取得
-                $userAccountResetRecord = $this->selectUserAccountReset($systemSettingDao, $userAccountResetDao, $accountResetUri);
-                if ($userAccountResetRecord === null || $userAccountResetRecord['user_id'] !== $userRecord['user_id']) {
-                    $this->throwDataNotFound('ユーザーアカウントリセット', $accountResetUri);
+                // ユーザー仮登録情報の取得
+                $userTempRecord = $this->selectUserTemp($systemSettingDao, $userTempDao, $accountRegistUri);
+                if ($userTempRecord === null || $userTempRecord['user_account'] !== $userAccount) {
+                    $this->throwDataNotFound('ユーザー仮登録', $accountRegistUri);
                 }
 
                 // 認証コードチェック
-                if ($data['auth_code'] !== $userAccountResetRecord['auth_code']) {
+                if ($data['auth_code'] !== $userTempRecord['auth_code']) {
                     // 認証コードが不正
                     $this->throwAnyError('auth_code', 'error_invalid_auth_code', []);
                 }
 
-                // 新しいパスワードで更新する
-                $this->updateUserPassword($userDao, $userRecord['user_id'], $data['password']);
-                // ユーザーアクセス情報をリセットする
-                $this->updateUserAccess($userAccessDao, $userRecord['user_id']);
-                // ユーザーアカウントリセット情報を削除する
-                $userAccountResetDao->deleteByAccountResetUri($accountResetUri);
+                // ユーザー情報を登録する
+                $userId = $this->insertUser($userDao, $data);
+                // ユーザーアクセス情報を登録
+                $this->insertUserAccess($userAccessDao, $userId);
+                // ユーザー仮登録情報を削除する
+                $userTempDao->deleteByAccountRegistUri($accountRegistUri);
             });
 
             // メールを送信する
-            $this->sendMailForPasswordChange($uri, $data['user_account']);
+            $this->sendMailForUserRegist($uri, $data['user_account']);
         } catch (DBException $ex) {
 
             throw $ex;
@@ -180,103 +194,83 @@ class PasswordChangeService extends DBBaseService {
     }
 
     /**
-     * ユーザーアカウントリセット情報を取得する。
+     * ユーザー仮登録情報を取得する。
      * @param SystemSettingDao $systemSettingDao システム設定Dao
-     * @param UserAccountResetDao $userAccountResetDao ユーザーアカウントリセットDAO
-     * @param string $accountResetUri ユーザーアカウントリセットのURI
+     * @param UserTempDao $userTempDao ユーザー仮登録DAO
+     * @param string $accountRegistUri アカウント登録のURI
      * @return ?array レコード
      */
-    private function selectUserAccountReset(SystemSettingDao $systemSettingDao, UserAccountResetDao $userAccountResetDao, string $accountResetUri): ?array {
+    private function selectUserTemp(SystemSettingDao $systemSettingDao, UserTempDao $userTempDao, string $accountRegistUri): ?array {
 
-        // ユーザーアカウントリセットのURI
-        if ($accountResetUri === null) {
+        // アカウント登録のURI
+        if ($accountRegistUri === null) {
             return null;
         }
 
         // 現在日
         $systemDate = DateUtil::getSystemDate();
 
-        // ユーザーアカウントリセット情報を取得する
-        $userAccountResetRecord = $userAccountResetDao->selectByAccountResetUri($accountResetUri);
+        // ユーザー仮登録情報を取得する
+        $userTempRecord = $userTempDao->selectByAccountRegistUri($accountRegistUri);
 
         // レコード存在チェック
-        if ($userAccountResetRecord === null) {
+        if ($userTempRecord === null) {
             // レコードが存在しない
             return null;
         }
 
-        // パスワードリセット有効期限（N分）
-        $passwordResetExpiredMinutes = (int) $systemSettingDao->getFromCacheBySystemCode('PASSWORD_RESET_EXPIRED_MINUTES')['system_value'];
+        // ユーザー登録有効期限（N分）
+        $userTempExpiredMinutes = (int) $systemSettingDao->getFromCacheBySystemCode('USER_TEMP_EXPIRED_MINUTES')['system_value'];
 
-        $createDatetime = DateUtil::createDateTime($userAccountResetRecord['create_datetime']);
-        if ($createDatetime < $systemDate->sub(new DateInterval('PT' . $passwordResetExpiredMinutes . 'M'))) {
+        $createDatetime = DateUtil::createDateTime($userTempRecord['create_datetime']);
+        if ($createDatetime < $systemDate->sub(new DateInterval('PT' . $userTempExpiredMinutes . 'M'))) {
             // 時間切れの場合
             return null;
         }
 
-        return $userAccountResetRecord;
+        return $userTempRecord;
     }
 
     /**
-     * ユーザパスワード情報を更新する。
+     * ユーザ情報を登録する。
      * @param UserDao $userDao ユーザDao
-     * @param string $userId ユーザID
-     * @param string $password パスワード
-     * @return int 更新件数
+     * @param array $data データ
+     * @return int ユーザーID
      */
-    private function updateUserPassword($userDao, $userId, $password) {
+    private function insertUser($userDao, $data): int {
 
-        $ret = 0;
-
-        // ユーザーアクセス情報を更新する
-        $updateCount = 0;
-        $updateCount = $userDao->updatePassword([
-            'user_id' => $userId,
-            'password' => $password,
+        // ユーザー情報を登録する
+        $userId = $userDao->insert([
+            'user_account' => $data['user_account'],
+            'password' => $data['password'],
+            'email' => $data['user_account'],
+            'user_name' => $data['user_name'],
+            'user_name_kana' => $data['user_name_kana'],
+            'authority' => CommonConstant::AUTH_NORMAL,
+            'create_datetime' => $this->systemDate->format(DateUtil::DATETIME_HYPHEN_FORMAT_COMMON),
+            'create_user_id' => 0,
             'update_datetime' => $this->systemDate->format(DateUtil::DATETIME_HYPHEN_FORMAT_COMMON),
             'update_user_id' => 0
         ]);
 
-        if ($updateCount !== 1) {
-            // ユーザーアクセス情報の更新に失敗
-            $this->throwDataNotFound('ユーザー', $userId);
-        }
-
-        return $ret;
+        return $userId;
     }
 
     /**
-     * ユーザアクセス情報を更新する。
+     * ユーザアクセス情報を登録する。
      * @param UserAccessDao $userAccessDao ユーザアクセスDao
      * @param string $userId ユーザID
-     * @return int 更新件数
      */
-    private function updateUserAccess($userAccessDao, $userId) {
-
-        $ret = 0;
-
-        // ロックを実施する（ロックを取得できるまで待機する）
-        $userAccessRec = $userAccessDao->selectAccessByUserId($userId, true);
-
-        if ($userAccessRec === null) {
-            // レコードが存在しない場合
-            $this->throwDataNotFound('ユーザーアクセス', $userId);
-        }
+    private function insertUserAccess($userAccessDao, $userId) {
 
         // ユーザーアクセス情報を更新する
-        $updateCount = 0;
-        $updateCount = $userAccessDao->updateAccessForClearAuthFailed([
+        $userAccessDao->insert([
             'user_id' => $userId,
+            'create_datetime' => $this->systemDate->format(DateUtil::DATETIME_HYPHEN_FORMAT_COMMON),
+            'create_user_id' => 0,
             'update_datetime' => $this->systemDate->format(DateUtil::DATETIME_HYPHEN_FORMAT_COMMON),
             'update_user_id' => 0
         ]);
-
-        if ($updateCount !== 1) {
-            // ユーザーアクセス情報の更新に失敗
-            $this->throwDataNotFound('ユーザーアクセス', $userId);
-        }
-
-        return $ret;
     }
 
     /**
@@ -294,20 +288,20 @@ class PasswordChangeService extends DBBaseService {
     }
 
     /**
-     * パスワード変更リクエストのメール送信処理。
+     * ユーザー登録のメール送信処理。
      * @param UriInterface $uri URI
      * @param string $userAccount ユーザーアカウント
      */
-    private function sendMailForPasswordChange($uri, $userAccount) {
+    private function sendMailForUserRegist($uri, $userAccount) {
 
         // ログインURLを生成する
         $loginUrl = $this->createLoginUrl($uri, $userAccount);
         // ログ出力する
-        $this->logger->info("PasswordChange user_account={$userAccount}");
+        $this->logger->info("UserRegist user_account={$userAccount}");
 
         $mailService = new MailService($this->dbConnection);
         $mailService->send(
-                'User/PasswordChange',
+                'User/UserRegist',
                 [
                     'loginUrl' => $loginUrl
                 ],

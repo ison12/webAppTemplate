@@ -96,7 +96,7 @@ class PasswordChangeRequestService extends DBBaseService {
                 }
 
                 // ユーザーアカウントリセット情報を登録する
-                $userAccountResetData = $this->insertUserAccountResetDao($userAccountResetDao, $userRecord);
+                $userAccountResetData = $this->insertUserAccountReset($userAccountResetDao, $userRecord);
 
                 // 現時点からの期限切れ時間を計算して古いデータを削除する
                 $expiredDate = DateUtil::getSystemDate();
@@ -127,7 +127,7 @@ class PasswordChangeRequestService extends DBBaseService {
      * @param array $userRecord ユーザーレコード
      * @return array レコード
      */
-    private function insertUserAccountResetDao(UserAccountResetDao $userAccountResetDao, array $userRecord): array {
+    private function insertUserAccountReset(UserAccountResetDao $userAccountResetDao, array $userRecord): array {
 
         $data = [];
 

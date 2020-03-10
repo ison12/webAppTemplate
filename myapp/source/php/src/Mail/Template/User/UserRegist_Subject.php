@@ -1,0 +1,1 @@
+<?= \App\Constant\CommonConstant::APP_NAME ?> ユーザー登録の完了

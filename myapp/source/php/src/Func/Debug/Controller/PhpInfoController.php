@@ -23,6 +23,9 @@ class PHPInfoController extends BaseController {
      */
     public function actionIndex() {
 
+        // 管理者のみアクセス可能なページのためチェックを実施する
+        $this->invalidAccessIfDeneiedUser();
+
         return $this->render('/Func/Debug/Front/View/PhpInfo', []);
     }
 
@@ -30,6 +33,10 @@ class PHPInfoController extends BaseController {
      * ロード処理。
      */
     public function actionLoad() {
+
+        // 管理者のみアクセス可能なページのためチェックを実施する
+        $this->invalidAccessIfDeneiedUser();
+
         return $this->renderJson([]);
     }
 
@@ -37,6 +44,9 @@ class PHPInfoController extends BaseController {
      * phpinfo関数の結果を表示する処理。
      */
     public function actionPhpInfo() {
+
+        // 管理者のみアクセス可能なページのためチェックを実施する
+        $this->invalidAccessIfDeneiedUser();
 
         // phpinfo()関数の内容を取得する
         ob_start();

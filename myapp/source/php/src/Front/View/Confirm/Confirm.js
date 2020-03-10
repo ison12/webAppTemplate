@@ -31,7 +31,9 @@ export default {
             // Positive or Negativeボタンクリック中のフラグ
             posiOrNegaClicking: false,
             // 種類
-            type: 'info' // info or warn or error
+            type: 'info', // info or warn or error
+            // 肯定ボタンクラスリスト
+            positiveButtonClass: []
         };
     },
     // ----------------------------------------------------
@@ -54,7 +56,7 @@ export default {
          * @param {Object} buttons ボタンセット
          */
         showInfo(caption, message, buttons) {
-            this.show('info', caption, message, buttons, "btn btn-primary text-white");
+            this.show('info', caption, message, buttons, ["btn", "btn-primary", "text-white"]);
         },
         /**
          * 警告表示。
@@ -63,7 +65,7 @@ export default {
          * @param {Object} buttons ボタンセット
          */
         showWarn(caption, message, buttons) {
-            this.show('warn', caption, message, buttons, "btn btn-warning text-white");
+            this.show('warn', caption, message, buttons, ["btn", "btn-warning", "text-white"]);
         },
         /**
          * エラー表示。
@@ -72,7 +74,7 @@ export default {
          * @param {Object} buttons ボタンセット
          */
         showError(caption, message, buttons) {
-            this.show('error', caption, message, buttons, "btn btn-danger text-white");
+            this.show('error', caption, message, buttons, ["btn", "btn-danger", "text-white"]);
         },
         /**
          * 表示処理。
@@ -97,8 +99,9 @@ export default {
          * @param {String} caption キャプション
          * @param {String} message メッセージ
          * @param {Object} buttons ボタンセット
+         * @param {Array} positiveButtonClass 肯定ボタンのクラス
          */
-        show(type, caption, message, buttons) {
+        show(type, caption, message, buttons, positiveButtonClass) {
 
             var self = this;
             var dialog = $(this.$el);
@@ -113,6 +116,7 @@ export default {
                 this.message.splice(0, this.message.length);
                 this.message.push(message);
             }
+            this.positiveButtonClass = positiveButtonClass;
 
             // buttons引数省略時にデフォルト値を設定
             var buttonsSet = typeof buttons !== 'undefined' ? buttons

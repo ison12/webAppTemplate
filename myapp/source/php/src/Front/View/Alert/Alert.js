@@ -31,7 +31,7 @@ export default {
             // 閉じるボタンクリック中のフラグ
             clickingClose: false,
             // 種類
-            type: 'info' // info or warn or error
+            type: 'info', // info or warn or error
         };
     },
     // ----------------------------------------------------
