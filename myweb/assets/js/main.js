@@ -6,7 +6,7 @@
 function scrollElement($selector, adjustSize) {
 
   $("html,body").animate({
-    scrollTop: $selector.offset().top + adjustSize
+    scrollTop: $selector.offset().top + adjustSize + 1
   });
 }
 
