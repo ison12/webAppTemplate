@@ -17,7 +17,7 @@ module.exports = merge(common, {
         // ブラウザの表示有無
         open: true,
         // ブラウザの表示ページ
-        openPage: prefixUri + '/login',
+        openPage: prefixUri.substring(1) + '/login',
         // HMR (Hot Module Replacement) の有無
         hot: true,
         // Webページリロードの有無
