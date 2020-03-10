@@ -11,5 +11,13 @@ ALTER TABLE `user_access` ADD CONSTRAINT PK_USER_ACCESS PRIMARY KEY (
 );
 
 
+-- -----------------------------------------------------------------------------
+-- FK：FK_USER_ACCESS_user_id
+-- -----------------------------------------------------------------------------
+ALTER TABLE `user_access` ADD CONSTRAINT FOREIGN KEY FK_USER_ACCESS_user_id (
+      `user_id`
+) REFERENCES user (
+      `user_id`
+) ON DELETE CASCADE ON UPDATE CASCADE;
 
 

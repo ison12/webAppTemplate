@@ -7,15 +7,9 @@
 -- PK：PK_SYSTEM_SETTING
 -- -----------------------------------------------------------------------------
 ALTER TABLE `system_setting` ADD CONSTRAINT PK_SYSTEM_SETTING PRIMARY KEY (
-      `id`
-);
-
--- -----------------------------------------------------------------------------
--- UK：UK_SYSTEM_SETTING_system_code
--- -----------------------------------------------------------------------------
-ALTER TABLE `system_setting` ADD CONSTRAINT UK_SYSTEM_SETTING_system_code UNIQUE (
       `system_code`
 );
+
 
 
 
