@@ -1,0 +1,33 @@
+.diary-editable-list-component {
+    max-width: 1500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.search-condition-area {
+    padding-bottom: 0px;
+}
+
+.editable-list-area {
+    padding-top   : 0px;
+    padding-bottom: 8px;
+}
+
+.editable-list-area th {
+    font-size: .9rem;
+}
+
+.editable-list-area td {
+    vertical-align: top;
+}
+
+.editable-list-area td input,
+.editable-list-area td textarea,
+.editable-list-area td label {
+    font-size: .9rem;
+}
+
+.editable-list-area td textarea {
+    overflow-x: scroll;
+    white-space: pre;
+}

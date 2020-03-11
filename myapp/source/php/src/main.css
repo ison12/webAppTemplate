@@ -74,10 +74,8 @@ body.layout-base {
 }
 
 .inline-block {
-    /*
     width: auto;
     display: inline-block;
-    */
 }
 
 .date {

@@ -189,6 +189,11 @@ class Validatation {
      */
     public function checkDateTime($value, $format = null): bool {
 
+        if (ValUtil::isEmpty($value)) {
+            // 元が空の場合はOKとする
+            return true;
+        }
+
         $dateTimeObj = DateUtil::createDateTime((string) $value, $format);
         return $dateTimeObj !== null;
     }

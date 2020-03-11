@@ -68,6 +68,9 @@ Vue.component("SystemSettingSearchComponent", SystemSettingSearchComponent);
 import SystemSettingEditComponent from 'Func/SystemSetting/Front/View/SystemSettingEdit.vue';
 Vue.component("SystemSettingEditComponent", SystemSettingEditComponent);
 
+import DiaryEditableListComponent from 'Func/Diary/Front/View/DiaryEditableList.vue';
+Vue.component("DiaryEditableListComponent", DiaryEditableListComponent);
+
 // -----------------------------------------------------------------------------
 // Vuex Store定義
 // -----------------------------------------------------------------------------
@@ -217,8 +220,8 @@ var AppFuncs = {
                     return [msg,
                         "アクセスURL=" + url,
                         "ステータス=" + textStatus,
-                        errorThrown && errorThrown.message ? "例外=" + errorThrown.message : null,
-                        XMLHttpRequest.responseText];
+                        errorThrown ? "例外=" + errorThrown : null,
+                        jqXHR.responseText];
                 }
 
             };

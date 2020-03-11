@@ -34,7 +34,8 @@
             </div>
 
             <div class="modal-body">
-                <div v-for="m in message"
+                <div class="message"
+                     v-for="m in message"
                      v-html="convertNewLineToBr(m)">
                 </div>
             </div>
