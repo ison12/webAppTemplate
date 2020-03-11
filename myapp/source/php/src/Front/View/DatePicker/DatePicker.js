@@ -41,7 +41,6 @@ export default {
     created() {
     },
     mounted() {
-        this.processInit();
     },
     beforeDestroy() {
         this.processDestroy();
@@ -57,18 +56,28 @@ export default {
 
             var self = this;
 
-            // DatePickerの初期化
-            DatePicker.applyCalendar(this.$el, {
-                /**
-                 * 日付カレンダーによる日付選択処理
-                 * @param {String} dateText 日付テキスト
-                 */
-                onSelect: function (dateText/*, inst*/) {
-                    // 親にイベントを送信する
-                    // 親のv-modelの更新
-                    self.$emit('input', dateText);
-                }
-            });
+            if (!this.readonly) {
+                // 編集可能な場合のみ初期化する
+
+                // DatePickerの初期化
+                DatePicker.applyCalendar(this.$el, {
+                    /**
+                     * 日付カレンダーによる日付選択処理
+                     * @param {String} dateText 日付テキスト
+                     */
+                    onSelect: function (dateText/*, inst*/) {
+                        // 親にイベントを送信する
+                        // 親のv-modelの更新
+                        self.$emit('input', dateText);
+                    }
+                });
+
+                return true;
+            } else {
+                this.processDestroy();
+            }
+
+            return false;
         },
         /**
          * 破棄処理。
@@ -84,6 +93,12 @@ export default {
         },
         // フォーカスされた場合
         onFocus: function (/*e*/) {
+
+            // フォーカス時にカレンダーコントロールを有効にする
+            if (this.processInit()) {
+                this.onShowCalendar();
+            }
+
             // 親にイベントを送信する
             this.$emit('focus');
         },
@@ -94,7 +109,7 @@ export default {
         },
         // カレンダーを表示する
         onShowCalendar: function (/*e*/) {
-            $(this.$refs.view).datepicker("show");
+            $(this.$el).datepicker("show");
         }
     },
     // ----------------------------------------------------
