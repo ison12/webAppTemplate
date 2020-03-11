@@ -201,7 +201,6 @@ class SystemSettingEditService extends DBBaseService {
         $data['create_user_id'] = $user->user_id ?? 0;
         $data['update_datetime'] = $this->systemDate->format(DateUtil::DATETIME_HYPHEN_MICRO_FORMAT_COMMON);
         $data['update_user_id'] = $user->user_id ?? 0;
-        $data['delete_flag'] = 0;
 
         $systemDao->insert($data);
 
@@ -233,7 +232,7 @@ class SystemSettingEditService extends DBBaseService {
      */
     private function saveForDelete(SystemSettingDao $systemDao, array $data, User $user = null) {
 
-        // 更新クエリ発行
+        // 削除クエリ発行
         $systemDao->delete($data['system_code_last']);
     }
 

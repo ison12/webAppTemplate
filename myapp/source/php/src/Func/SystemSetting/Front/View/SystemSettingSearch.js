@@ -1,6 +1,7 @@
 /* global AppContext */
 
 import VueJsCommonMixin from "Front/Common/VueJsMixin/VueJsCommonMixin.js";
+import VueJsInputErrorMixin from "Front/Common/VueJsMixin/VueJsInputErrorMixin.js";
 import VueJsPagerMixin from "Front/Common/VueJsMixin/VueJsPagerMixin.js";
 import DatePicker from "Front/View/DatePicker/DatePicker.vue";
 
@@ -13,6 +14,7 @@ export default {
     // ----------------------------------------------------
     mixins: [
         VueJsCommonMixin,
+        VueJsInputErrorMixin,
         VueJsPagerMixin
     ],
     // ----------------------------------------------------
@@ -41,10 +43,7 @@ export default {
             list: {},
             previousSearch: null,
             // 選択行ID
-            selectedId: null,
-            // エラー情報
-            errors: [],
-            errorsOnBoard: []
+            selectedId: null
         };
     },
     // ----------------------------------------------------
