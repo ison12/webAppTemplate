@@ -65,7 +65,7 @@ export default {
          * @param {Object} buttons ボタンセット
          */
         showWarn(caption, message, buttons) {
-            this.show('warn', caption, message, buttons, ["btn", "btn-warning", "text-white"]);
+            this.show('warn', caption, message, buttons, ["btn", "btn-warning", "text-black"]);
         },
         /**
          * エラー表示。

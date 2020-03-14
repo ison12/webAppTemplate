@@ -1,12 +1,17 @@
 <div class="app-header-component" v-cloak ref="view">
 
-    <nav class="navbar navbar-expand navbar-light bg-light fixed-top">
+    <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
 
         <a class="navbar-brand"
-           v-bind:href="($store.getters.loginUser && $store.getters.loginUser.user_account) ? AppContext.baseUrl + '/top' : AppContext.baseUrl + '/login'">{{AppContext.name}} <img v-bind:src="AppContext.baseUrl + '/assets/img/logo.png'" height="31"></a>
+           v-bind:href="(isLoggedIn()) ? AppContext.baseUrl + '/top' : AppContext.baseUrl + '/login'">{{AppContext.name}} <img v-bind:src="AppContext.baseUrl + '/assets/img/logo.png'" height="31"></a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
+                v-if="isLoggedIn()">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto" v-if="$store.getters.loginUser && $store.getters.loginUser.user_account">
+            <ul class="navbar-nav mr-auto" v-if="isLoggedIn()">
 
                 <li class="nav-item">
                     <a class="nav-link" v-bind:href="AppContext.baseUrl + '/diary/editableList'">
@@ -17,7 +22,7 @@
                 <li class="nav-item dropdown" v-if="$store.getters.loginUser.authority === 'admin'">
 
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="oi oi-cog"></span> 設定
+                        <span class="oi oi-cog"></span> システム管理
                     </a>
                     <div class="dropdown-menu">
                         <a class="dropdown-item"
@@ -28,7 +33,7 @@
                 <li class="nav-item dropdown" v-if="$store.getters.loginUser.authority === 'admin'">
 
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="oi oi-bug"></span> システム管理
+                        <span class="oi oi-bug"></span> 開発ツール
                     </a>
                     <div class="dropdown-menu">
                         <a class="dropdown-item"
@@ -41,25 +46,26 @@
                 </li>
 
             </ul>
-        </div>
 
-        <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
-            <li class="nav-item dropdown" v-if="$store.getters.loginUser && $store.getters.loginUser.user_account">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="oi oi-person"></span> {{$store.getters.loginUser.user_name}}
-                </a>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item"
-                       href="#'"
-                       @click.stop.prevent='onDeleteUser'><span class="oi oi-circle-x"></span> 退会</a>
-                </div>
-            </li>
-            <li class="nav-item" v-if="$store.getters.loginUser && $store.getters.loginUser.user_account">
-                <a class="nav-link" v-bind:href="AppContext.baseUrl + '/logout'">
-                    <span class="oi oi-account-logout"></span>
-                </a>
-            </li>
-        </ul>
+            <ul class="navbar-nav" v-if="isLoggedIn()">
+                <li class="nav-item dropdown" v-if="isLoggedIn()">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="oi oi-person"></span> {{$store.getters.loginUser.user_name}}
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item"
+                           href="#'"
+                           @click.stop.prevent='onDeleteUser'><span class="oi oi-circle-x"></span> 退会</a>
+                    </div>
+                </li>
+                <li class="nav-item" v-if="isLoggedIn()">
+                    <a class="nav-link" v-bind:href="AppContext.baseUrl + '/logout'">
+                        <span class="oi oi-account-logout"></span> ログアウト
+                    </a>
+                </li>
+            </ul>
+
+        </div>
 
     </nav>
 

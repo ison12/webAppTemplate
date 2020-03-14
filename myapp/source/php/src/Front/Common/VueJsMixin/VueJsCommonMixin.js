@@ -124,6 +124,17 @@ export default {
         }
     },
     filters: {
+        formatDateD: function (value) {
+
+            if (!value) {
+                return "";
+            }
+
+            var dateObj = DateUtil.parseYmdHmsF(value);
+            var dateStr = DateUtil.toString(dateObj, 'dd');
+
+            return dateStr;
+        },
         formatDateYmd: function (value) {
 
             if (!value) {

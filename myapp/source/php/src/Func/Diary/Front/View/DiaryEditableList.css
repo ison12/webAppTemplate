@@ -31,3 +31,22 @@
     overflow-x: scroll;
     white-space: pre;
 }
+
+.searchresult .table td,
+.searchresult .table th {
+    padding-left : .25rem;
+    padding-right: .25rem;
+}
+
+.searchresult .table td {
+    padding-top   : .5rem;
+    padding-bottom: .5rem;
+}
+
+.searchresult .table td > pre {
+    font-family: inherit;
+    font-size  : inherit;
+    margin : 0;
+    padding: 0;
+    white-space: pre-wrap;
+}

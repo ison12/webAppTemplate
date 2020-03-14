@@ -35,6 +35,13 @@ export default {
     // メソッド
     // ----------------------------------------------------
     methods: {
+        /**
+         * ログイン有無判定。
+         * @returns {Boolean} true ログイン済み、false 未ログイン
+         */
+        isLoggedIn() {
+            return this.$store.getters.loginUser && this.$store.getters.loginUser.user_account;
+        },
         // ------------------------------------
         // イベントの定義
         // ------------------------------------
@@ -112,7 +119,7 @@ export default {
             // 確認メッセージ
             this.getConfirmComponent().showWarn(
                     "退会確認",
-                    AppContext.name + "を退会します。今後、本サイトのサービスが使用できなくなりますが問題ありませんか？",
+                    AppContext.name + "を退会します。\n今後、本サイトのサービスが使用できなくなりますが問題ありませんか？",
                     {
                         positive: {
                             text: "退会する",
@@ -123,7 +130,7 @@ export default {
                             onCloseComplete() { }
                         },
                         negative: {
-                            text: "やっぱり退会しません",
+                            text: "キャンセル",
                             onClick() {
                                 return true;
                             },

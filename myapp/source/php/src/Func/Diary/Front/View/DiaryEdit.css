@@ -1,0 +1,12 @@
+.diary-edit-component {
+    display: none;
+}
+
+.diary-edit-component .message {
+    word-break: break-all;
+}
+
+.modal-body {
+    padding-top   : 0rem;
+    padding-bottom: 0rem;
+}

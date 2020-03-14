@@ -24,7 +24,7 @@ export default class {
 
         var splitYmdHmsF = str.split(' ');
         if (splitYmdHmsF.length < 2) {
-            return d;
+            return this.parseYmd(str);
         }
         var strYmd = splitYmdHmsF[0];
         var strHmsF = splitYmdHmsF[1];

@@ -2,6 +2,10 @@
      v-cloak
      >
 
+    <diary-edit-component ref="diaryEditDialog"
+                          :errors="errors"
+                          @onClose="onCloseDiaryEdit"></diary-edit-component>
+
     <nav aria-label="breadcrumb">
         <!-- パンくずリスト -->
         <ol class="breadcrumb">
@@ -10,7 +14,7 @@
         </ol>
     </nav>
 
-    <div class="card">
+    <div class="card" v-if="isLoad">
 
         <div class="card-body search-condition-area">
 
@@ -19,7 +23,7 @@
                 <div class="form-group row">
                     <div class="col-12 clearfix">
 
-                        <select class="custom-select form-control inline-block float-left"
+                        <select class="custom-select form-control inline-block float-left mr-2"
                                 v-model="condition.diaryYear"
                                 @change="onChangeDiaryYear">
                             <option v-for="year in diaryYearMonthInfo.diaryYearList"
@@ -27,38 +31,17 @@
                                     :value="year">{{year + '年'}}</option>
                         </select>
 
-                        <nav class="inline-block float-left ml-2">
-                            <ul class="pagination">
-                                <li class="page-item">
-                                    <a class="page-link"
-                                       href="#"
-                                       @click.stop.prevent="onSearchPrev()">
-                                        ←
-                                    </a></li>
-                                <li class="page-item"
-                                    v-for="month in diaryMonthList"
+                        <select class="custom-select form-control inline-block float-left mr-2"
+                                v-model="condition.diaryMonth"
+                                @change="onSearch(condition.diaryYear, condition.diaryMonth)">
+                            <option v-for="month in diaryMonthList"
                                     :key="month"
-                                    :class="{'active': condition.diaryMonth === month}">
-                                    <a class="page-link"
-                                       href="#"
-                                       @click.stop.prevent="onSearch(condition.diaryYear, month)">{{month + '月'}}</a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link"
-                                       href="#"
-                                       @click.stop.prevent="onSearchNext()">
-                                        →
-                                    </a></li>
-                            </ul>
-                        </nav>
+                                    :value="month">{{month + '月'}}</option>
+                        </select>
 
-                        <button class="btn btn-primary float-left ml-2"
-                                @click.stop.prevent="onSearch()">
-                            <span class="oi oi-reload"></span>
-                        </button>
-
-                        <a href="#" class="btn btn-success float-right ml-2"
-                           @click.stop.prevent="onAddRecord"><span class="oi oi-document"></span> 新しく日記を書く</a>
+                        <a href="#"
+                           class="btn btn-primary float-right"
+                           @click.stop.prevent="onViewRecord(null)"><span class="oi oi-plus"></span></a>
 
                     </div>
                 </div>
@@ -74,52 +57,30 @@
             </div>
 
             <!-- 検索結果 -->
-            <div class="searchresult" v-if="list.length > 0">
+            <div class="searchresult table-responsive" v-if="list.length > 0">
 
                 <table class="table" style="table-layout: fixed; width: 100%;">
                     <thead>
                         <tr>
-                            <th style="width: 50px;">No.</th>
-                            <th style="width: 130px;">日付</th>
-                            <th style="width: 250px;">タイトル</th>
-                            <th>内容 <span class="text-muted">※改行可能です</span></th>
-                            <th style="width: 100px;">操作</th>
+                            <th style="width: 60px;">日付</th>
+                            <th style="width: 100%;">タイトル<br>内容</th>
+                            <th style="width: 50px;"></th>
                         </tr>
                     </thead>
                     <tbody>
                     <template v-for="(rec, index) in list">
-                        <tr :key="index"
-                            :style="{'background-color': (rec.isChange ? 'aliceblue' : 'initial')}"
-                            >
-                            <td class="text-right"><p class="form-control-plaintext">{{(index + 1)}}</p></td>
-                            <td><date-picker-component class="form-control date" style="width: 120px;" v-model="rec.diary_datetime" :readonly="!rec.isChange" /></td>
-                        <td><input type="text" class="form-control"
-                                   v-model="rec.title"
-                                   :readonly="!rec.isChange"></td>
-                        <td><textarea type="text" class="form-control"
-                                      v-model="rec.content"
-                                      :rows="calcRows(rec.content)"
-                                      :readonly="!rec.isChange"></textarea></td>
-                        <td>
-                            <a href="#" class="btn btn-primary"
-                               @click.stop.prevent="onSaveRecord(rec, index)"
-                               v-if="rec.isChange">
-                                <span class="oi oi-pencil"></span>
-                            </a>
-                            <a href="#" class="btn btn-danger"
-                               @click.stop.prevent="onDeleteRecord(rec, index)"
-                               v-if="rec.isChange">
-                                <span class="oi oi-circle-x"></span>
-                            </a>
-                            <a href="#" class="btn btn-success"
-                               @click.stop.prevent="setRowOfChangeMarking(rec)"
-                               v-if="!rec.isChange">
-                                <span class="oi oi-lock-unlocked"></span>
-                            </a>
-                        </td>
-                        </tr>
-                        <tr v-if="errorsOnBoard && errorsOnBoard.length > 0 && index === targetRowIndex">
-                            <td colspan="5"><error-list-component :errors="errorsOnBoard"></error-list-component></td>
+                        <tr :key="index">
+                            <td>{{rec.diary_datetime | formatDateD}}日</td>
+                            <td>
+                                <strong>{{rec.title}}</strong>
+                                <pre>{{rec.content}}</pre>
+                            </td>
+                            <td>
+                                <a href="#" class="btn btn-primary"
+                                   @click.stop.prevent="onViewRecord(rec)">
+                                    <span class="oi oi-document"></span>
+                                </a>
+                            </td>
                         </tr>
                     </template>
                     </tbody>

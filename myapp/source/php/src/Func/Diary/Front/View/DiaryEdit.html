@@ -1,0 +1,117 @@
+<div class="diary-edit-component modal fade"
+     tabindex="-1"
+     role="dialog"
+     data-backdrop='static'
+     v-cloak>
+
+    <div class="modal-dialog modal-lg"
+         role="document">
+
+        <div class="modal-content">
+
+            <div class="modal-header alert alert-primary">
+                <h5 class="modal-title">
+                    <span class="oi oi-pencil"></span>
+                    <span v-if="isNew">新しい日記の保存</span>
+                    <span v-else-if="isEditStarting">日記の編集</span>
+                    <span v-else>日記の表示</span>
+                </h5>
+                <button type="button"
+                        class="close"
+                        v-on:click="onClickCancel">
+                    <span>&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <error-list-component :errors="errorsOnBoard"></error-list-component>
+
+                <div class="form-group">
+                    <label class="text-muted">日付</label>
+
+                    <div>
+                        <date-picker-component
+                            name="diary_datetime"
+                            class="form-control date"
+                            style="display: inline-block; width: 100px;"
+                            v-model="data.diary_datetime"
+                            :readonly="!isEditStarting" />
+                        &nbsp;
+                        <input-error-view-component class="form-control-plaintext"
+                                                    style="display: inline-block; width: auto;" :selector="'[name=diary_datetime]'" :messageInfo="getError('diary_datetime')"></input-error-view-component>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="text-muted">タイトル</label>
+                    <div>
+                        <input type="text"
+                               name="title"
+                               class="form-control"
+                               v-model="data.title"
+                               :readonly="!isEditStarting">
+                        <input-error-view-component class="form-control-plaintext" :selector="'[name=title]'" :messageInfo="getError('title')"></input-error-view-component>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="text-muted">内容</label>
+                    <textarea name="content"
+                              class="form-control"
+                              rows="6"
+                              v-model="data.content"
+                              :readonly="!isEditStarting"></textarea>
+                    <input-error-view-component class="form-control-plaintext" :selector="'[name=content]'" :messageInfo="getError('content')"></input-error-view-component>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <div class="clearfix" style="width: 100%">
+                    <div class="float-left">
+                        <button type="button"
+                                class="btn btn-success"
+                                v-on:click="onClickEditStart"
+                                v-if="!isNew && !isEditStarting">
+                            <span class="oi oi-lock-unlocked"></span>
+                        </button>
+
+                        <button type="button"
+                                class="btn btn-success"
+                                v-on:click="onClickEditEnd"
+                                v-if="!isNew && isEditStarting">
+                            <span class="oi oi-lock-locked"></span>
+                        </button>
+                    </div>
+                    <div class="float-right">
+                        <button type="button"
+                                class="btn btn-primary"
+                                v-on:click="onClickSave"
+                                v-if="isEditStarting">
+                            <span class="oi oi-pencil"></span> 保存
+                        </button>
+
+                        <button type="button"
+                                class="btn btn-danger"
+                                v-on:click="onClickDelete"
+                                v-if="!isNew && isEditStarting">
+                            <span class="oi oi-x"></span> 削除
+                        </button>
+
+                        <button type="button"
+                                class="btn btn-secondary"
+                                v-on:click="onClickCancel"
+                                v-if="isNew || !isEditStarting">
+                            <span class="oi oi-circle-x"></span> 閉じる
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
