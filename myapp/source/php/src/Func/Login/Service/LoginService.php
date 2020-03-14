@@ -97,7 +97,7 @@ class LoginService extends DBBaseService {
                     $userRecord = $userDao->selectByUserAccount($userAccount, true);
 
                     // ログイン判定（アカウント存在チェック）
-                    if ($userRecord === null || (bool) $userRecord['delete_flag']) {
+                    if ($userRecord === null) {
                         $this->throwInvalidAuthException();
                     }
                     // ログイン判定（パスワードチェック）

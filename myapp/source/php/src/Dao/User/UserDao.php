@@ -42,8 +42,7 @@ class UserDao extends BaseDao {
                     'create_datetime',
                     'create_user_id',
                     'update_datetime',
-                    'update_user_id',
-                    'delete_flag'
+                    'update_user_id'
                 ])
                 ->from('user')
                 ->where()
