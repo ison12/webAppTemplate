@@ -39,78 +39,9 @@ import AppComponent from 'Front/View/App/App.vue';
 Vue.component("AppComponent", AppComponent);
 
 // -----------------------------------------------------------------------------
-// 機能別コンポーネント
+// ルートVueJsインスタンス定義
 // -----------------------------------------------------------------------------
-import PhpInfoComponent from 'Func/Debug/Front/View/PhpInfo.vue';
-Vue.component("PhpInfoComponent", PhpInfoComponent);
-
-import LoginComponent from 'Func/Login/Front/View/Login.vue';
-Vue.component("LoginComponent", LoginComponent);
-
-import PasswordChangeRequestComponent from 'Func/Password/Front/View/PasswordChangeRequest.vue';
-Vue.component("PasswordChangeRequestComponent", PasswordChangeRequestComponent);
-
-import PasswordChangeComponent from 'Func/Password/Front/View/PasswordChange.vue';
-Vue.component("PasswordChangeComponent", PasswordChangeComponent);
-
-import UserRegistRequestComponent from 'Func/User/Front/View/UserRegistRequest.vue';
-Vue.component("UserRegistRequestComponent", UserRegistRequestComponent);
-
-import UserRegistComponent from 'Func/User/Front/View/UserRegist.vue';
-Vue.component("UserRegistComponent", UserRegistComponent);
-
-import TopComponent from 'Func/Top/Front/View/Top.vue';
-Vue.component("TopComponent", TopComponent);
-
-import SystemSettingSearchComponent from 'Func/SystemSetting/Front/View/SystemSettingSearch.vue';
-Vue.component("SystemSettingSearchComponent", SystemSettingSearchComponent);
-
-import SystemSettingEditComponent from 'Func/SystemSetting/Front/View/SystemSettingEdit.vue';
-Vue.component("SystemSettingEditComponent", SystemSettingEditComponent);
-
-import DiaryEditableListComponent from 'Func/Diary/Front/View/DiaryEditableList.vue';
-Vue.component("DiaryEditableListComponent", DiaryEditableListComponent);
-
-// -----------------------------------------------------------------------------
-// Vuex Store定義
-// -----------------------------------------------------------------------------
-const store = new Vuex.Store({
-    state: {
-        // ログインユーザー
-        loginUser: {}
-    },
-    mutations: {
-        /**
-         * ログインユーザーの設定
-         * @param {Vuex.Store} state State
-         * @param {Object} user ユーザー情報
-         */
-        loginUser(state, user) {
-            // 状態を変更する
-            state.loginUser = user;
-        }
-    },
-    getters: {
-        /**
-         * ログインユーザーの取得
-         * @param {Vuex.Store} state State
-         * @returns {Object} ユーザー情報
-         */
-        loginUser(state) {
-            return state.loginUser;
-        }
-    }
-});
-
-// -----------------------------------------------------------------------------
-// ルートVueJsインスタンスを生成
-// -----------------------------------------------------------------------------
-const vm = new Vue({
-    el: '#app',
-    store, // Vuexを利用する
-    render: h => h("AppComponent")
-});
-
+var vm = null;
 
 // -----------------------------------------------------------------------------
 // Ajaxインスタンスの定義
@@ -124,26 +55,102 @@ let ajax = null;
 var AppFuncs = {
 
     /**
+     * VuexStoreを生成する。
+     * @returns {Vuex.Store} VuexStore
+     */
+    createVmStore() {
+
+        const store = new Vuex.Store({
+            state: {
+                // ログインユーザー
+                loginUser: {}
+            },
+            mutations: {
+                /**
+                 * ログインユーザーの設定
+                 * @param {Vuex.Store} state State
+                 * @param {Object} user ユーザー情報
+                 */
+                loginUser(state, user) {
+                    // 状態を変更する
+                    state.loginUser = user;
+                }
+            },
+            getters: {
+                /**
+                 * ログインユーザーの取得
+                 * @param {Vuex.Store} state State
+                 * @returns {Object} ユーザー情報
+                 */
+                loginUser(state) {
+                    return state.loginUser;
+                }
+            }
+        });
+
+        return store;
+    },
+
+    /**
+     * VueJsインスタンスを生成する。
+     * @returns {Vue} VueJsインスタンス
+     */
+    createVm() {
+
+        const store = AppFuncs.createVmStore();
+
+        const vm = new Vue({
+            el: '#app',
+            store, // Vuexを利用する
+            render: h => h("AppComponent")
+        });
+
+        return vm;
+
+    },
+
+    /**
      * コンテントコンポーネントの設定
+     * @param {String} componentPath コンポーネントパス
      * @param {String} componentId コンポーネントID
      * @param {Boolean} isVisibleHeader ヘッダ表示有無
      * @param {Boolean} isVisibleFooter フッタ表示有無
      */
-    applyContentComponent(componentId, isVisibleHeader, isVisibleFooter) {
+    applyContentComponent(componentPath, componentId, isVisibleHeader, isVisibleFooter) {
 
-        vm.$nextTick(function () {
+        // 動的インポートを実施
+        //
+        // componentPathを以下のルールで変換
+        // 例）ログインの場合
+        //    /Func/Login/Front/View/Login
+        //     ↓
+        //   ./Func/Login/Front/View/Login.vue
+        const componentLoadPromise = import("./" + componentPath.replace(/^\//, "") + ".vue");
 
-            // $root要素の子はAppComponent（refs設定がないので$children[0]で決め打ちする）
-            var appComponent = vm.$root.$children[0];
+        componentLoadPromise.then(function (value) {
+            // 動的インポート完了
 
-            // Ajaxオブジェクトを初期化する
-            AppFuncs.getAjax();
+            // VueのComponentのグローバル登録は、Vueインスタンス生成前に実施する必要あり
+            Vue.component(componentId, value.default /* import関数の戻り値に default があるので、そちらを使用する（defaultエクスポート定義を読み込むという意味になる） */);
+            // Vueインスタンスの生成
+            vm = AppFuncs.createVm();
 
-            // AppComponentのdataを設定する
-            appComponent.componentId = componentId;
-            appComponent.isVisibleHeader = isVisibleHeader;
-            appComponent.isVisibleFooter = isVisibleFooter;
+            // レンダリングを実行
+            vm.$nextTick(function () {
+
+                // $root要素の子はAppComponent（refs設定がないので$children[0]で決め打ちする）
+                const appComponent = vm.$root.$children[0];
+
+                // Ajaxオブジェクトを初期化する
+                AppFuncs.getAjax();
+
+                // AppComponentを初期化する
+                appComponent.componentId = componentId;
+                appComponent.isVisibleHeader = isVisibleHeader;
+                appComponent.isVisibleFooter = isVisibleFooter;
+            });
         });
+
     },
 
     /**

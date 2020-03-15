@@ -26,12 +26,13 @@ use App\Common\Util\ViewUtil;
 <script type="text/javascript">
 
     // コンテンツのコンポーネントIDの取得
+    var contentsComponentPath = "<?= $__contentsViewPath ?>";
     var contentsComponentId = "<?= $__contentsViewName ?>";
     if (contentsComponentId && contentsComponentId !== "") {
         contentsComponentId += "Component";
     }
 
     // コンテンツコンポーネントの適用
-    window.AppFuncs.applyContentComponent(contentsComponentId, <?= $__isVisibleHeader ?>, <?= $__isVisibleFooter ?>);
+    window.AppFuncs.applyContentComponent(contentsComponentPath, contentsComponentId, <?= $__isVisibleHeader ?>, <?= $__isVisibleFooter ?>);
     
 </script>
