@@ -70,6 +70,16 @@ MySQLのrootパスワードは後で利用するので、メモしておくこ�
     </IfModule>
     …
 
+[Xamppインストールパス]\apache\conf\extra\httpd-ssl.conf
+
+    …
+    Listen 443 → Listen 5556
+    …
+    <VirtualHost _default_:443> → <VirtualHost _default_:5556>
+    …
+    ServerName www.example.com:443 → ServerName www.example.com:5556
+    …
+
 ### PHPの設定
 [Xamppインストールパス]\php\php.ini
 
