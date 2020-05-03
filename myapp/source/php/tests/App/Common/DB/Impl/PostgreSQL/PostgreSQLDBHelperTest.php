@@ -3,15 +3,15 @@
 namespace Tests\App\Common\DB\Impl\PostgreSQL;
 
 use App\Common\DB\DBFactory;
-use Tests\Common\DBBaseTest;
+use Tests\Common\PostgreSQLBaseTest;
 
 /**
  * PostgreSQLDBHelperTest。
  * テストクラス。
  *
- * 
+ *
  */
-class PostgreSQLDBHelperTest extends DBBaseTest {
+class PostgreSQLDBHelperTest extends PostgreSQLBaseTest {
 
     /**
      * 共通処理。

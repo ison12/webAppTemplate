@@ -9,7 +9,7 @@ use App\Common\Util\ValUtil;
 /**
  * バリデーションクラス。
  *
- * 
+ *
  */
 class Validatation {
 
@@ -26,7 +26,7 @@ class Validatation {
     public static function getInstance($messageFilePath = null) {
 
         if ($messageFilePath === null) {
-            $messageFilePath = SRC_PATH . 'Message/ValidateMessage.php';
+            $messageFilePath = SRC_PATH . 'Message/ValidateMessageConfig.php';
         }
 
         // Make default if first instance
@@ -189,11 +189,6 @@ class Validatation {
      */
     public function checkDateTime($value, $format = null): bool {
 
-        if (ValUtil::isEmpty($value)) {
-            // 元が空の場合はOKとする
-            return true;
-        }
-
         $dateTimeObj = DateUtil::createDateTime((string) $value, $format);
         return $dateTimeObj !== null;
     }
@@ -205,7 +200,7 @@ class Validatation {
      */
     public function checkUrl($value): bool {
 
-        return preg_match("/^http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?$/", $value);
+        return preg_match("/^http(s)?:\/\/([\w\-]+\.)+[\w\-]+(\/[\w\- .\/?%&=]*)?$/", $value);
     }
 
     /**

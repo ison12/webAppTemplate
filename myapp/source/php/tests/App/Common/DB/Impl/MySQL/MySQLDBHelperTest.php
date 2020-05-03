@@ -3,15 +3,15 @@
 namespace Tests\App\Common\DB\Impl\MySQL;
 
 use App\Common\DB\DBFactory;
-use Tests\Common\DBBaseTest;
+use Tests\Common\MySQLBaseTest;
 
 /**
  * MySQLDBHelperTest。
  * テストクラス。
  *
- * 
+ *
  */
-class MySQLDBHelperTest extends DBBaseTest {
+class MySQLDBHelperTest extends MySQLBaseTest {
 
     /**
      * 共通処理。

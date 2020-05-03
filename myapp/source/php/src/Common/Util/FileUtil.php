@@ -3,7 +3,6 @@
 namespace App\Common\Util;
 
 use App\Common\Exception\FileException;
-use App\Constants\ConstAlbumEditor;
 use Exception;
 
 /**
@@ -405,22 +404,18 @@ class FileUtil {
     /**
      * ファイルコンテンツを読み込む。
      * @param string $filePath ファイルパス
-     * @param bool $useIncludePath インクルードパス使用有無
-     * @param type $context コンテキスト
-     * @param int $offset 読み取り位置
-     * @param int $maxlen 読み取り数
-     * @return boolean 読み取り有無
-     * @throws FileException
+     * @return string ファイルコンテンツ
+     * @throws FileException ファイル関連の例外
      */
-    public static function readFile(string $filePath, bool $useIncludePath = false, $context = null, int $offset = 0, int $maxlen = null) {
+    public static function readFile(string $filePath) {
 
         if (self::existsFile($filePath) !== true) {
-            return false;
+            return '';
         }
 
         // ファイルに出力する
-        $ret = file_get_contents($filePath, $useIncludePath, $context, $offset, $maxlen);
-        if (!$ret) {
+        $ret = file_get_contents($filePath);
+        if ($ret === false) {
             throw new FileException("filePath={$filePath}, FileUtil#readFile実行時に、ファイル読み込みに失敗");
         }
 
@@ -768,7 +763,7 @@ class FileUtil {
      */
     public static function convertToOsDirSeparator($file) {
 
-        return str_replace('/', DIRECTORY_SEPARATOR, $file);
+        return str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $file);
     }
 
     /**
@@ -994,30 +989,59 @@ class FileUtil {
         if (!self::existsFile($zipPath)) {
             return false;
         }
-        // 圧縮ファイルオープン
-        $zip = new \ZipArchive();
-        if (true !== $zip->open($zipPath)) {
-            return false;
-        }
         // 解凍先のパスがなければ作成
         if (!self::existsFile($toPath)) {
             if (!FileUtil::makeDirectory($toPath)) {
                 return false;
             }
         }
+
+        $zip = new \ZipArchive();
+        if (true !== $zip->open($zipPath)) {
+            return false;
+        }
+
         // 圧縮ファイルの解凍開始
         for ($i = 0; $i < $zip->numFiles; $i++) {
 
             $stat = $zip->statIndex($i);
 
-            $entryName = $zip->getNameIndex($i, \ZipArchive::FL_ENC_RAW);
+            $entryName = $stat['name'];
+            $entryNameRaw = $zip->getNameIndex($i, \ZipArchive::FL_ENC_RAW);
+
+            if (mb_strrpos($entryName, '/') === mb_strlen($entryName) - 1) {
+                // ディレクトリエントリの場合
+                continue;
+            }
+
             // 文字コード変換(マルチバイト対応)
             // Win環境の圧縮だとファイル名がラテン文字で解凍されるため変換
-            $encoded = mb_detect_encoding($entryName, 'UTF-8, CP932, SJIS-win', true);
-            $destName = mb_convert_encoding($entryName, 'UTF-8', $encoded);
-            $zip->renameName($stat['name'], $destName);
-            // 解凍先へファイル移動
-            $zip->extractTo($toPath, $destName);
+            $encoded = mb_detect_encoding($entryNameRaw, 'UTF-8, CP932, SJIS-win', true);
+
+            $destName = mb_convert_encoding($entryNameRaw, 'UTF-8', $encoded);
+
+            $destFilePath = $toPath . DIRECTORY_SEPARATOR . FileUtil::convertToOsDirSeparator($destName);
+
+            FileUtil::makeDirectory(dirname($destFilePath));
+
+            $fw = fopen($destFilePath, 'w');
+            $fr = $zip->getStream($entryName);
+
+            while (!feof($fr)) {
+
+                $contents = fread($fr, 1024);
+
+                if ($contents === false) {
+                    return false;
+                }
+
+                if (fwrite($fw, $contents) === false) {
+                    return false;
+                }
+            }
+
+            fclose($fr);
+            fclose($fw);
         }
 
         return $zip->close();

@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'validation_required' => '%itemName%は必須です。',
+    'validation_alphabet' => '%itemName%はアルファベットで入力してください。',
+    'validation_alphabet_lower' => '%itemName%は小文字のアルファベットで入力してください。',
+    'validation_alphabet_upper' => '%itemName%は大文字のアルファベットで入力してください。',
+    'validation_integer' => '%itemName%は整数で入力してください。',
+    'validation_signed_integer' => '%itemName%は符号付きの整数で入力してください。',
+    'validation_numeric' => '%itemName%は数値で入力してください。',
+    'validation_numeric_length' => '%itemName%は数値で入力してください。（整数部 %integerPartLength%桁、小数部 %fractionalPart%桁）',
+    'validation_signed_numeric' => '%itemName%は符号付きの数値で入力してください。',
+    'validation_signed_numeric_length' => '%itemName%は符号付きの数値で入力してください。（整数部 %integerPartLength%桁、小数部 %fractionalPart%桁）',
+    'validation_half_char' => '%itemName%は半角文字で入力してください。',
+    'validation_kana_or_half_char' => '%itemName%はカナまたは半角文字で入力してください。',
+    'validation_date_time' => '%itemName%は日時形式で入力してください。',
+    'validation_url' => '%itemName%はURL形式で入力してください。',
+    'validation_email' => '%itemName%はEMail形式で入力してください。',
+    'validation_regexp' => '%itemName%は%formatMessage%形式で入力してください。',
+    'validation_length' => '%itemName%は%length%桁で入力してください。',
+    'validation_range_length' => '%itemName%は%min%桁～%max%桁で入力してください。',
+    'validation_range_numeric' => '%itemName%は%min%～%max%で入力してください。',
+    'validation_range_datetime' => '%itemName%は%min%～%max%で入力してください。',
+    'validation_password' => '%itemName%は英小文字・大文字・数字・記号が混在する%length%桁以上で入力してください。',
+    'validation_password_confirm' => '入力したパスワードと確認内容が異なります。',
+];

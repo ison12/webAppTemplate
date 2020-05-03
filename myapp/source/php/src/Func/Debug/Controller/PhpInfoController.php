@@ -4,18 +4,22 @@ namespace App\Func\Debug\Controller;
 
 use App\Func\Base\Controller\BaseController;
 use Slim\App;
+use Slim\Psr7\Request;
+use Slim\Psr7\Response;
 
 /**
  * PHPInfoコントローラー。
  */
-class PHPInfoController extends BaseController {
+class PhpInfoController extends BaseController {
 
     /**
      * コンストラクタ。
      * @param App $app アプリケーションオブジェクト
+     * @param Request $request HTTPリクエスト
+     * @param Response $response HTTPレスポンス
      */
-    public function __construct(App $app) {
-        parent::__construct($app);
+    public function __construct(App $app, Request $request, Response $response) {
+        parent::__construct($app, $request, $response);
     }
 
     /**
@@ -55,13 +59,12 @@ class PHPInfoController extends BaseController {
         ob_clean();
 
         // レスポンスに内容を取得する
-        $response = $this->container->response;
-        $response = $response->withStatus(200)->withHeader('Content-type', 'text/html');
+        $this->response = $this->response->withStatus(200)->withHeader('Content-type', 'text/html');
 
-        $body = $response->getBody();
+        $body = $this->response->getBody();
         $body->write($phpInfoContents);
 
-        return $response;
+        return $this->response;
     }
 
 }

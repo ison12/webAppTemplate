@@ -2,6 +2,7 @@
 
 namespace App\Func\User\Service;
 
+use App\Common\App\AppContext;
 use App\Common\Exception\DBException;
 use App\Common\Exception\ServiceException;
 use App\Common\Util\DateUtil;
@@ -161,7 +162,7 @@ class UserRegistRequestService extends DBBaseService {
         $userAccountEnc = \urlencode($userAccount);
         $idEnc = \urlencode($id);
 
-        $userRegistUrl = UrlUtil::createRootUrlWithBase($uri) . "/user/regist?user_account={$userAccountEnc}&id={$idEnc}";
+        $userRegistUrl = UrlUtil::createRootUrlWithBase($uri, AppContext::get()->getBasePath()) . "/user/regist?user_account={$userAccountEnc}&id={$idEnc}";
         return $userRegistUrl;
     }
 
@@ -175,7 +176,7 @@ class UserRegistRequestService extends DBBaseService {
 
         $userAccountEnc = \urlencode($userAccount);
 
-        $loginUrl = UrlUtil::createRootUrlWithBase($uri) . "/login?user_account={$userAccountEnc}";
+        $loginUrl = UrlUtil::createRootUrlWithBase($uri, AppContext::get()->getBasePath()) . "/login?user_account={$userAccountEnc}";
         return $loginUrl;
     }
 
@@ -189,7 +190,7 @@ class UserRegistRequestService extends DBBaseService {
 
         $userAccountEnc = \urlencode($userAccount);
 
-        $userRegistUrl = UrlUtil::createRootUrlWithBase($uri) . "/password/changeRequest?user_account={$userAccountEnc}";
+        $userRegistUrl = UrlUtil::createRootUrlWithBase($uri, AppContext::get()->getBasePath()) . "/password/changeRequest?user_account={$userAccountEnc}";
         return $userRegistUrl;
     }
 

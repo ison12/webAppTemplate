@@ -6,23 +6,22 @@ use App\Common\Exception\ServiceException;
 use App\Func\Base\Controller\BaseController;
 use App\Func\User\Service\UserRegistRequestService;
 use Slim\App;
+use Slim\Psr7\Request;
+use Slim\Psr7\Response;
 
 /**
- * ユーザー登録コントローラー。
+ * ユーザー登録依頼コントローラー。
  */
 class RegistRequestController extends BaseController {
 
     /**
-     * @var bool 認証を要するかどうかのフラグ、true：要認証、false、不要
-     */
-    protected $needAuth = false;
-
-    /**
      * コンストラクタ。
      * @param App $app アプリケーションオブジェクト
+     * @param Request $request HTTPリクエスト
+     * @param Response $response HTTPレスポンス
      */
-    public function __construct(App $app) {
-        parent::__construct($app);
+    public function __construct(App $app, Request $request, Response $response) {
+        parent::__construct($app, $request, $response);
     }
 
     /**
@@ -51,7 +50,7 @@ class RegistRequestController extends BaseController {
 
         try {
             $service = new UserRegistRequestService();
-            $service->registRequest($params['data'], $this->container->request->getUri());
+            $service->registRequest($params['data'], $this->request->getUri());
 
             // データを返却する
             $data = [

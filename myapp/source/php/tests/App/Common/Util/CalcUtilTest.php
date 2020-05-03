@@ -24,10 +24,10 @@ class CalcUtilTest extends BaseTest {
     public function testConvertMmToPt() {
 
         $pt = CalcUtil::convertMmToPt(297);
-        $this->assertSame(841.89, $pt);
+        $this->assertSame(841.8892, $pt);
 
         $pt = CalcUtil::convertMmToPt(420);
-        $this->assertSame(1190.55, $pt);
+        $this->assertSame(1190.5504, $pt);
     }
 
     /**
@@ -36,10 +36,10 @@ class CalcUtilTest extends BaseTest {
     public function testConvertPtToPixel() {
 
         $pt = CalcUtil::convertPtToPixel(1);
-        $this->assertSame(1, $pt);
+        $this->assertSame(1.3333, $pt);
 
         $pt = CalcUtil::convertPtToPixel(1025);
-        $this->assertSame(1367, $pt);
+        $this->assertSame(1366.6667, $pt);
     }
 
     /**

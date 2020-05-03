@@ -37,7 +37,7 @@ class BaseService {
      */
     public function __construct() {
         $this->systemDate = DateUtil::getSystemDate();
-        $this->errorMessage = MessageManager::getInstance(SRC_PATH . 'Message/Message.php');
+        $this->errorMessage = MessageManager::getInstance(SRC_PATH . 'Message/MessageConfig.php');
         $this->logger = AppLogger::get();
     }
 

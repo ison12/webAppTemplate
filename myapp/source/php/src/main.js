@@ -217,18 +217,46 @@ var AppFuncs = {
                 // "timeout"
                 // "abort"
                 // "parsererror"
-
                 if (textStatus === "timeout") {
                     const msg = String(TIMEOUT_MESSAGE);
                     return [msg,
                         "アクセスURL=" + url];
                 } else {
+
+                    if (jqXHR.responseJSON) {
+                        var errorObj = jqXHR.responseJSON;
+                        if (
+                                errorObj.type &&
+                                errorObj.summary &&
+                                errorObj.message) {
+                            return [errorObj.summary,
+                                errorObj.message];
+                        }
+                    }
+
+                    let body = jqXHR.responseText;
+                    if (jqXHR.responseJSON) {
+
+                        var errorObj = jqXHR.responseJSON;
+                        if (
+                                errorObj.type &&
+                                errorObj.summary &&
+                                errorObj.message) {
+                            return [errorObj.summary,
+                                "アクセスURL=" + url,
+                                errorObj.message];
+                            return;
+                        }
+
+                        body = JSON.stringify(jqXHR.responseJSON, null, '  ');
+                    }
+
                     const msg = EXPECTED_MESSAGE;
                     return [msg,
                         "アクセスURL=" + url,
                         "ステータス=" + textStatus,
                         errorThrown ? "例外=" + errorThrown : null,
-                        jqXHR.responseText];
+                        body];
                 }
 
             };

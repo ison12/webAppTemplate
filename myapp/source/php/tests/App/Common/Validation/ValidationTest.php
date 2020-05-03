@@ -10,7 +10,7 @@ use Tests\Common\BaseTest;
  * バリデーション。
  * テストクラス。
  *
- * 
+ *
  */
 class ValidationTest extends BaseTest {
 
@@ -47,7 +47,7 @@ class ValidationTest extends BaseTest {
 
         for ($index = 0; $index < $errorLen; $index++) {
             $this->assertSame('test', $errors[$index]['id']);
-            $this->assertSame('テストは、必須です。', $errors[$index]['message']);
+            $this->assertSame('テストは必須です。', $errors[$index]['message']);
         }
     }
 
@@ -76,7 +76,7 @@ class ValidationTest extends BaseTest {
 
         for ($index = 0; $index < $errorLen; $index++) {
             $this->assertSame('test', $errors[$index]['id']);
-            $this->assertSame('テストは、アルファベットで入力してください。', $errors[$index]['message']);
+            $this->assertSame('テストはアルファベットで入力してください。', $errors[$index]['message']);
         }
     }
 
@@ -107,7 +107,7 @@ class ValidationTest extends BaseTest {
 
         for ($index = 0; $index < $errorLen; $index++) {
             $this->assertSame('test', $errors[$index]['id']);
-            $this->assertSame('テストは、小文字のアルファベットで入力してください。', $errors[$index]['message']);
+            $this->assertSame('テストは小文字のアルファベットで入力してください。', $errors[$index]['message']);
         }
     }
 
@@ -138,7 +138,7 @@ class ValidationTest extends BaseTest {
 
         for ($index = 0; $index < $errorLen; $index++) {
             $this->assertSame('test', $errors[$index]['id']);
-            $this->assertSame('テストは、大文字のアルファベットで入力してください。', $errors[$index]['message']);
+            $this->assertSame('テストは大文字のアルファベットで入力してください。', $errors[$index]['message']);
         }
     }
 
@@ -172,7 +172,7 @@ class ValidationTest extends BaseTest {
 
         for ($index = 0; $index < $errorLen; $index++) {
             $this->assertSame('test', $errors[$index]['id']);
-            $this->assertSame('テストは、整数で入力してください。', $errors[$index]['message']);
+            $this->assertSame('テストは整数で入力してください。', $errors[$index]['message']);
         }
     }
 
@@ -206,7 +206,7 @@ class ValidationTest extends BaseTest {
 
         for ($index = 0; $index < $errorLen; $index++) {
             $this->assertSame('test', $errors[$index]['id']);
-            $this->assertSame('テストは、符号付きの整数で入力してください。', $errors[$index]['message']);
+            $this->assertSame('テストは符号付きの整数で入力してください。', $errors[$index]['message']);
         }
     }
 
@@ -244,7 +244,7 @@ class ValidationTest extends BaseTest {
 
         for ($index = 0; $index < $errorLen; $index++) {
             $this->assertSame('test', $errors[$index]['id']);
-            $this->assertSame('テストは、数値で入力してください。（整数部 5桁、小数部 1桁）', $errors[$index]['message']);
+            $this->assertSame('テストは数値で入力してください。（整数部 5桁、小数部 1桁）', $errors[$index]['message']);
         }
 
         $errorLen = 10;
@@ -273,7 +273,7 @@ class ValidationTest extends BaseTest {
 
         for ($index = 0; $index < $errorLen; $index++) {
             $this->assertSame('test', $errors[$index]['id']);
-            $this->assertSame('テストは、数値で入力してください。', $errors[$index]['message']);
+            $this->assertSame('テストは数値で入力してください。', $errors[$index]['message']);
         }
     }
 
@@ -317,7 +317,7 @@ class ValidationTest extends BaseTest {
 
         for ($index = 0; $index < $errorLen; $index++) {
             $this->assertSame('test', $errors[$index]['id']);
-            $this->assertSame('テストは、符号付きの数値で入力してください。（整数部 5桁、小数部 1桁）', $errors[$index]['message']);
+            $this->assertSame('テストは符号付きの数値で入力してください。（整数部 5桁、小数部 1桁）', $errors[$index]['message']);
         }
 
         $errorLen = 8;
@@ -352,7 +352,7 @@ class ValidationTest extends BaseTest {
 
         for ($index = 0; $index < $errorLen; $index++) {
             $this->assertSame('test', $errors[$index]['id']);
-            $this->assertSame('テストは、符号付きの数値で入力してください。', $errors[$index]['message']);
+            $this->assertSame('テストは符号付きの数値で入力してください。', $errors[$index]['message']);
         }
     }
 
@@ -381,7 +381,7 @@ class ValidationTest extends BaseTest {
 
         for ($index = 0; $index < $errorLen; $index++) {
             $this->assertSame('test', $errors[$index]['id']);
-            $this->assertSame('テストは、半角文字で入力してください。', $errors[$index]['message']);
+            $this->assertSame('テストは半角文字で入力してください。', $errors[$index]['message']);
         }
     }
 
@@ -412,7 +412,7 @@ class ValidationTest extends BaseTest {
 
         for ($index = 0; $index < $errorLen; $index++) {
             $this->assertSame('test', $errors[$index]['id']);
-            $this->assertSame('テストは、日時形式で入力してください。', $errors[$index]['message']);
+            $this->assertSame('テストは日時形式で入力してください。', $errors[$index]['message']);
         }
     }
 
@@ -442,7 +442,7 @@ class ValidationTest extends BaseTest {
 
         for ($index = 0; $index < $errorLen; $index++) {
             $this->assertSame('test', $errors[$index]['id']);
-            $this->assertSame('テストは、URL形式で入力してください。', $errors[$index]['message']);
+            $this->assertSame('テストはURL形式で入力してください。', $errors[$index]['message']);
         }
     }
 
@@ -472,7 +472,7 @@ class ValidationTest extends BaseTest {
 
         for ($index = 0; $index < $errorLen; $index++) {
             $this->assertSame('test', $errors[$index]['id']);
-            $this->assertSame('テストは、EMail形式で入力してください。', $errors[$index]['message']);
+            $this->assertSame('テストはEMail形式で入力してください。', $errors[$index]['message']);
         }
     }
 
@@ -505,7 +505,7 @@ class ValidationTest extends BaseTest {
 
         for ($index = 0; $index < $errorLen; $index++) {
             $this->assertSame('test', $errors[$index]['id']);
-            $this->assertSame('テストは、郵便番号形式で入力してください。', $errors[$index]['message']);
+            $this->assertSame('テストは郵便番号形式で入力してください。', $errors[$index]['message']);
         }
     }
 
@@ -533,7 +533,7 @@ class ValidationTest extends BaseTest {
 
         for ($index = 0; $index < $errorLen; $index++) {
             $this->assertSame('test', $errors[$index]['id']);
-            $this->assertSame('テストは、2桁で入力してください。', $errors[$index]['message']);
+            $this->assertSame('テストは2桁で入力してください。', $errors[$index]['message']);
         }
     }
 
@@ -561,7 +561,7 @@ class ValidationTest extends BaseTest {
 
         for ($index = 0; $index < $errorLen; $index++) {
             $this->assertSame('test', $errors[$index]['id']);
-            $this->assertSame('テストは、2桁～3桁で入力してください。', $errors[$index]['message']);
+            $this->assertSame('テストは2桁～3桁で入力してください。', $errors[$index]['message']);
         }
     }
 
@@ -589,7 +589,7 @@ class ValidationTest extends BaseTest {
 
         for ($index = 0; $index < $errorLen; $index++) {
             $this->assertSame('test', $errors[$index]['id']);
-            $this->assertSame('テストは、1～999で入力してください。', $errors[$index]['message']);
+            $this->assertSame('テストは1～999で入力してください。', $errors[$index]['message']);
         }
     }
 
@@ -620,7 +620,7 @@ class ValidationTest extends BaseTest {
 
         for ($index = 0; $index < $errorLen; $index++) {
             $this->assertSame('test', $errors[$index]['id']);
-            $this->assertSame('テストは、2018-01-01 00:00:01～2018-05-03 00:00:01で入力してください。', $errors[$index]['message']);
+            $this->assertSame('テストは2018-01-01 00:00:01～2018-05-03 00:00:01で入力してください。', $errors[$index]['message']);
         }
     }
 

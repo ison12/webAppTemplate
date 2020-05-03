@@ -8,7 +8,7 @@ use App\Common\Util\ViewUtil;
 
     // アプリケーションコンテキストの定義
     var AppContext = Object.freeze({
-        name: 'My App',
+        name: 'Myapp',
         environment: '<?= $__environment ?>',
         baseUrl: '<?= $__baseUrl ?>',
         requestParams: <?= json_encode($__requestParams) ?>,
@@ -34,5 +34,5 @@ use App\Common\Util\ViewUtil;
 
     // コンテンツコンポーネントの適用
     window.AppFuncs.applyContentComponent(contentsComponentPath, contentsComponentId, <?= $__isVisibleHeader ?>, <?= $__isVisibleFooter ?>);
-    
+
 </script>

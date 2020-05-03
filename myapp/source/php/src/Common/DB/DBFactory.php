@@ -46,7 +46,7 @@ class DBFactory {
         $app = AppContext::get();
         $appContainer = $app->getContainer();
 
-        $dbSettings = $appContainer->get('db')[$dbInfo];
+        $dbSettings = $appContainer->get('config')['db'][$dbInfo];
 
         self::$dbSettings[$dbInfo] = $dbSettings;
 

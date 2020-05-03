@@ -5,15 +5,15 @@ namespace Tests\App\Common\DB\Impl\MySQL;
 use App\Common\DB\DBFactory;
 use App\Common\DB\DBRawValue;
 use Exception;
-use Tests\Common\DBBaseTest;
+use Tests\Common\MySQLBaseTest;
 
 /**
  * MySQLQueryInsert。
  * テストクラス。
  *
- * 
+ *
  */
-class MySQLQueryInsertTest extends DBBaseTest {
+class MySQLQueryInsertTest extends MySQLBaseTest {
 
     /**
      * 共通処理。

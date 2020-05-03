@@ -4,15 +4,15 @@ namespace Tests\App\Common\DB\Impl\MySQL;
 
 use App\Common\DB\DBFactory;
 use Exception;
-use Tests\Common\DBBaseTest;
+use Tests\Common\MySQLBaseTest;
 
 /**
  * MySQLQueryUpdate。
  * テストクラス。
  *
- * 
+ *
  */
-class MySQLQueryUpdateTest extends DBBaseTest {
+class MySQLQueryUpdateTest extends MySQLBaseTest {
 
     /**
      * 共通処理。

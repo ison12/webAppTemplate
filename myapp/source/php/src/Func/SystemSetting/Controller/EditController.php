@@ -8,6 +8,8 @@ use App\Func\Base\Controller\BaseController;
 use App\Func\SystemSetting\Service\SystemSettingEditService;
 use App\Func\SystemSetting\Service\SystemSettingSearchService;
 use Slim\App;
+use Slim\Psr7\Request;
+use Slim\Psr7\Response;
 
 /**
  * システム設定編集コントローラー。
@@ -17,9 +19,11 @@ class EditController extends BaseController {
     /**
      * コンストラクタ。
      * @param App $app アプリケーションオブジェクト
+     * @param Request $request HTTPリクエスト
+     * @param Response $response HTTPレスポンス
      */
-    public function __construct(App $app) {
-        parent::__construct($app);
+    public function __construct(App $app, Request $request, Response $response) {
+        parent::__construct($app, $request, $response);
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Func\Password\Service;
 
+use App\Common\App\AppContext;
 use App\Common\Exception\DBException;
 use App\Common\Exception\ServiceException;
 use App\Common\Util\DateUtil;
@@ -15,6 +16,7 @@ use App\Dao\User\UserDao;
 use App\Func\Base\Service\DBBaseService;
 use App\Func\Common\Service\MailService;
 use DateInterval;
+use DateTime;
 use Psr\Http\Message\UriInterface;
 use Slim\Http\Uri;
 
@@ -157,18 +159,18 @@ class PasswordChangeRequestService extends DBBaseService {
         $userAccountEnc = \urlencode($userAccount);
         $idEnc = \urlencode($id);
 
-        $passwordChangeUrl = UrlUtil::createRootUrlWithBase($uri) . "/password/change?user_account={$userAccountEnc}&id={$idEnc}";
+        $passwordChangeUrl = UrlUtil::createRootUrlWithBase($uri, AppContext::get()->getBasePath()) . "/password/change?user_account={$userAccountEnc}&id={$idEnc}";
         return $passwordChangeUrl;
     }
 
     /**
      * パスワード変更リクエストのメール送信処理。
      * @param UriInterface $uri URI
-     * @param \DateTime $expiredDate 有効期限切れ日時
+     * @param DateTime $expiredDate 有効期限切れ日時
      * @param string $userAccount ユーザーアカウント
      * @param array $userAccountResetData ユーザーアカウントリセット情報
      */
-    private function sendMailForPasswordChangeRequest($uri, \DateTime $expiredDate, $userAccount, $userAccountResetData) {
+    private function sendMailForPasswordChangeRequest($uri, DateTime $expiredDate, $userAccount, $userAccountResetData) {
 
         // パスワード変更URLを生成する
         $passwordChangeUrl = $this->createPasswordChangeUrl($uri, $userAccount, $userAccountResetData['account_reset_uri']);

@@ -87,7 +87,7 @@ class ValUtil {
 
     /**
      * 文字列の真偽値を、bool型の真偽値に変換する。
-     * @param string $val 値
+     * @param mixed $val 値
      * @return boolean 真偽値
      */
     public static function convertToBool($val): bool {
@@ -99,6 +99,48 @@ class ValUtil {
         }
 
         return false;
+    }
+
+    /**
+     * nullの場合、空文字に変換する。
+     * @param string $val 値
+     * @return string 変換値
+     */
+    public static function convertNullToEmpty(string $val): string {
+
+        if (self::isEmpty($val)) {
+            return '';
+        }
+
+        return $val;
+    }
+
+    /**
+     * nullの場合、0に変換する。
+     * @param int $val 値
+     * @return int 変換値
+     */
+    public static function convertNullToZero(?int $val): int {
+
+        if (self::isEmpty($val)) {
+            return 0;
+        }
+
+        return $val;
+    }
+
+    /**
+     * 文字列（数値）からカンマを取り除く。
+     * @param string $val 値
+     * @return string 変換値
+     */
+    public static function omitCammaForNum(string $val): string {
+
+        if (self::isEmpty($val)) {
+            return '0';
+        }
+
+        return str_replace(",", "", $val);
     }
 
     /**

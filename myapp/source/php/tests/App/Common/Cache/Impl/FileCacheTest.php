@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\App\Common\DB\Impl\PostgreSQL;
+namespace Tests\App\Common\Cache\Impl;
 
 use App\Common\Cache\CacheManager;
 use App\Common\Cache\ImplException\InvalidArgumentExceptionImpl;
@@ -13,7 +13,7 @@ use Tests\Common\BaseTest;
  * FileCache。
  * テストクラス。
  *
- * 
+ *
  */
 class FileCacheTest extends BaseTest {
 
@@ -282,7 +282,7 @@ class FileCacheTest extends BaseTest {
             } catch (InvalidArgumentException $exc) {
                 $this->assertTrue(false);
             }
-            $index ++;
+            $index++;
         }
 
         $index = 1;

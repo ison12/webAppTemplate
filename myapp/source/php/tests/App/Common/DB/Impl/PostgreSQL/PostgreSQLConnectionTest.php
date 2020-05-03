@@ -6,15 +6,15 @@ use App\Common\DB\DBFactory;
 use App\Common\DB\Impl\PostgreSQL\PostgreSQLConnection;
 use App\Common\Exception\DBException;
 use PDO;
-use Tests\Common\DBBaseTest;
+use Tests\Common\PostgreSQLBaseTest;
 
 /**
  * PostgreSQLConnection。
  * テストクラス。
  *
- * 
+ *
  */
-class PostgreSQLConnectionTest extends DBBaseTest {
+class PostgreSQLConnectionTest extends PostgreSQLBaseTest {
 
     /**
      * 共通処理。
@@ -78,8 +78,8 @@ class PostgreSQLConnectionTest extends DBBaseTest {
                 'connectionStr' => 'pgsql:dbname=unit_test; host=localhost; port=9999;',
                 'userId' => 'postgres',
                 'password' => 'password',
-                'connectTimeoutMsec' => 30 * 1000,
-                'queryTimeoutMsec' => 30 * 1000,
+                'connectTimeoutMsec' => 3 * 1000,
+                'queryTimeoutMsec' => 3 * 1000,
             ]);
             $this->assertTrue(false);
         } catch (DBException $exc) {
@@ -178,7 +178,7 @@ class PostgreSQLConnectionTest extends DBBaseTest {
                     $this->assertSame(12345, $rec['column3']);
                     $this->assertSame(true, $rec['column4']);
                 });
-                $this->assertSame(1, count($fetchRet));
+                $this->assertSame(1, $fetchRet);
             }
 
             // queryFetchStatement

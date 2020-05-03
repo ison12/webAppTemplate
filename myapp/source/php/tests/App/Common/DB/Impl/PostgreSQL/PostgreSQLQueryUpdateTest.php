@@ -4,15 +4,15 @@ namespace Tests\App\Common\DB\Impl\PostgreSQL;
 
 use App\Common\DB\DBFactory;
 use Exception;
-use Tests\Common\DBBaseTest;
+use Tests\Common\PostgreSQLBaseTest;
 
 /**
  * PostgreSQLQueryUpdate。
  * テストクラス。
  *
- * 
+ *
  */
-class PostgreSQLQueryUpdateTest extends DBBaseTest {
+class PostgreSQLQueryUpdateTest extends PostgreSQLBaseTest {
 
     /**
      * 共通処理。

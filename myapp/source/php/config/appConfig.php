@@ -1,25 +1,41 @@
 <?php
 
 return [
-    'settings' => [
-        // Environment settings.
-        // development or test or staging or production
-        'environment' => 'test',
-        'displayErrorDetails' => true, // set to false in production
-        'addContentLengthHeader' => false, // Allow the web server to send the content-length header
-        // Renderer settings
-        'renderer' => [
-            'template_path' => __DIR__ . '/../src',
+    // 環境設定
+    // development or test or staging or production
+    'environment' => 'development',
+    // ベースURI
+    'baseUri' => '/myapp',
+    // 公開ページ（公開されているページでは認証チェックを実施しない）
+    // 設定値は全て小文字にすること
+    'publicPage' => [
+        'login' => true,
+        'logout' => true,
+        'password' => [
+            'change' => true,
+            'changerequest' => true
         ],
-        // Monolog settings
-        'logger' => [
-            'name' => 'app',
-            'path' => __DIR__ . '/../log/app.log',
-            'level' => \Monolog\Logger::DEBUG,
+        'user' => [
+            'regist' => true,
+            'registrequest' => true
         ],
-        // DB Cache
-        'dbCache' => __DIR__ . '/../cache/db/'
     ],
+    // Monolog settings
+    'logger' => [
+        'name' => 'app',
+        'path' => __DIR__ . '/../log/app.log',
+        'level' => \Monolog\Logger::DEBUG,
+    ],
+    // コマンド実行
+    'command' => [
+        // Windowsは "php-win"、Linuxは "php" とする
+        'phpExecPath' => "php-win",
+        // Windowsのファイル区切り文字はバックスラッシュとする "\" 、Linuxはスラッシュとする "/"
+        'phpExecConfigPath' => "php.ini",
+    ],
+    // DBキャッシュ
+    'dbCache' => __DIR__ . '/../cache/db/',
+    // DB設定
     'db' => [
         'default' => [
             'type' => 'mysql',

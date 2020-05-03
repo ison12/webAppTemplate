@@ -1,17 +1,7 @@
 <?php
 
 use App\Common\Log\AppLogger;
-
-// 第3引数からパラメータを取得する
-$params = $argv[2] ?? null;
-
-// json文字列からデータを復元する
-$paramsObj = [];
-$paramsObjError = 0;
-if ($params !== null) {
-    $paramsObj = json_decode($params, true);
-    $paramsObjError = json_last_error();
-}
+use App\Common\Util\FileUtil;
 
 /*
  * サーバーパラメータの設定
@@ -31,34 +21,51 @@ if (isset($paramsObj['SERVER_PORT'])) {
 if (isset($paramsObj['REMOTE_ADDR'])) {
     $_SERVER['REMOTE_ADDR'] = $paramsObj['REMOTE_ADDR'];
 }
-if (isset($paramsObj['REQUEST_URL'])) {
-    $_SERVER['REQUEST_URL'] = $paramsObj['REQUEST_URL'];
-}
-if (isset($paramsObj['APP_POOL_ID'])) {
-    $_SERVER['APP_POOL_ID'] = $paramsObj['APP_POOL_ID'];
+if (isset($paramsObj['REQUEST_URI'])) {
+    $_SERVER['REQUEST_URI'] = $paramsObj['REQUEST_URI'];
 }
 
-// Boot the app
+// Boot the app（クラスローダーを合わせて読み込む）
 $app = require __DIR__ . '/../../bootstrap.php';
+
+// ↓↓以降、クラスのオートローダーが動き出す
+// --------------------------------------------------
+// 第2引数からクラス名を取得する
+$className = $argv[1];
+$classNameArray = explode('\\', $className);
+// 第3引数からパラメータを取得する
+$argsFilePath = $argv[2] ?? null;
+// パラメータ文字列を取得する
+$params = FileUtil::readFile($argsFilePath);
+
+// json文字列からデータを復元する
+$paramsObj = [];
+$paramsObjError = 0;
+$paramsObjErrorMsg = '';
+if ($params !== null) {
+    $paramsObj = json_decode($params, true);
+    $paramsObjError = json_last_error();
+    $paramsObjErrorMsg = json_last_error_msg();
+}
+
+$log = AppLogger::get();
+
+if ($paramsObj === null) {
+    $log->error('パラメータ : ' . $params . ', Jsonエラー : ' . $paramsObjError . ', Jsonエラーメッセージ : ' . $paramsObjErrorMsg);
+    exit(1);
+}
+
+// パラメータファイルを削除する
+FileUtil::delete($argsFilePath);
 
 /**
  * オブジェクトの生成
  */
-// 第2引数からクラス名を取得する
-$className = $argv[1];
-$classNameArray = explode('\\', $className);
-
-$log = AppLogger::get();
-
 // コマンドオブジェクトを生成する
 $obj = new $className();
 
 set_time_limit(0);
-
-if ($paramsObj === null) {
-    $log->error('パラメータ : ' . $params . ', Jsonエラー : ' . $paramsObjError);
-    exit(1);
-}
+ini_set('memory_limit', '2048M');
 
 $username = getenv('USERNAME') ?: getenv('USER');
 $log->info('コマンド : ' . $className);

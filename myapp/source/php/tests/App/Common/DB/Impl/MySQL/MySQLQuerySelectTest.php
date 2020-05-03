@@ -3,18 +3,19 @@
 namespace Tests\App\Common\DB\Impl\MySQL;
 
 use App\Common\DB\DBFactory;
+use App\Common\DB\DBRawValue;
 use App\Common\DB\Impl\MySQL\MySQLConnection;
 use App\Common\Exception\DBException;
 use Exception;
-use Tests\Common\DBBaseTest;
+use Tests\Common\MySQLBaseTest;
 
 /**
  * MySQLQuerySelect。
  * テストクラス。
  *
- * 
+ *
  */
-class MySQLQuerySelectTest extends DBBaseTest {
+class MySQLQuerySelectTest extends MySQLBaseTest {
 
     /**
      * 共通処理。
@@ -84,7 +85,7 @@ class MySQLQuerySelectTest extends DBBaseTest {
         // SELECTクエリ
         // カラム句にUPPER関数を指定
         $querySelect = DBFactory::createSelect(self::$mysqlDBName)
-                ->column(new \App\Common\DB\DBRawValue(['upper(column1)', 'column1']), 'column2')
+                ->column(new DBRawValue(['upper(column1)', 'column1']), 'column2')
                 ->from('test')
                 ->orderByAsc('id')
         ;

@@ -2,6 +2,7 @@
 
 namespace App\Func\Password\Service;
 
+use App\Common\App\AppContext;
 use App\Common\Exception\DBException;
 use App\Common\Exception\ServiceException;
 use App\Common\Util\DateUtil;
@@ -289,7 +290,7 @@ class PasswordChangeService extends DBBaseService {
 
         $userAccountEnc = \urlencode($userAccount);
 
-        $loginUrl = UrlUtil::createRootUrlWithBase($uri) . "/login?user_account={$userAccountEnc}";
+        $loginUrl = UrlUtil::createRootUrlWithBase($uri, AppContext::get()->getBasePath()) . "/login?user_account={$userAccountEnc}";
         return $loginUrl;
     }
 

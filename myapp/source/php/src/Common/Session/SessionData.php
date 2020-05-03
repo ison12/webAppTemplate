@@ -11,9 +11,9 @@ class SessionData {
 
     /**
      * ユーザーオブジェクトを取得する。
-     * @return User ユーザーオブジェクト
+     * @return UserData ユーザーオブジェクト
      */
-    public static function getUser() {
+    public static function getUser(): ?User {
         return $_SESSION[SessionData::class . '_USER'] ?? null;
     }
 
@@ -21,7 +21,7 @@ class SessionData {
      * ユーザーオブジェクトを設定する。
      * @param User $user ユーザーオブジェクト
      */
-    public static function setUser($user) {
+    public static function setUser(?User $user) {
         $_SESSION[SessionData::class . '_USER'] = $user;
     }
 

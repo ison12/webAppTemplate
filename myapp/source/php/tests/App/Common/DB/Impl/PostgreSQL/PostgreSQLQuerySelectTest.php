@@ -6,15 +6,15 @@ use App\Common\DB\DBFactory;
 use App\Common\DB\Impl\PostgreSQL\PostgreSQLConnection;
 use App\Common\Exception\DBException;
 use Exception;
-use Tests\Common\DBBaseTest;
+use Tests\Common\PostgreSQLBaseTest;
 
 /**
  * PostgreSQLQuerySelect。
  * テストクラス。
  *
- * 
+ *
  */
-class PostgreSQLQuerySelectTest extends DBBaseTest {
+class PostgreSQLQuerySelectTest extends PostgreSQLBaseTest {
 
     /**
      * 共通処理。

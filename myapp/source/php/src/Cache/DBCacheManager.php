@@ -23,7 +23,7 @@ class DBCacheManager {
     public static function getInstance() {
 
         if (self::$cacheDir === null) {
-            self::$cacheDir = AppContext::get()->getContainer()->settings['dbCache'];
+            self::$cacheDir = AppContext::get()->getContainer()->get('config')['dbCache'];
         }
 
         return CacheManager::getInstance(self::$cacheDir);

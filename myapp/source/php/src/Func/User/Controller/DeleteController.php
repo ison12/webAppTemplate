@@ -7,6 +7,8 @@ use App\Common\Session\SessionData;
 use App\Func\Base\Controller\BaseController;
 use App\Func\User\Service\UserDeleteService;
 use Slim\App;
+use Slim\Psr7\Request;
+use Slim\Psr7\Response;
 
 /**
  * ユーザー削除コントローラー。
@@ -16,9 +18,11 @@ class DeleteController extends BaseController {
     /**
      * コンストラクタ。
      * @param App $app アプリケーションオブジェクト
+     * @param Request $request HTTPリクエスト
+     * @param Response $response HTTPレスポンス
      */
-    public function __construct(App $app) {
-        parent::__construct($app);
+    public function __construct(App $app, Request $request, Response $response) {
+        parent::__construct($app, $request, $response);
     }
 
     /**
@@ -31,7 +35,7 @@ class DeleteController extends BaseController {
 
         try {
             $service = new UserDeleteService();
-            $service->delete($data, SessionData::getUser(), $this->container->request->getUri());
+            $service->delete($data, SessionData::getUser(), $this->request->getUri());
 
             // データを返却する
             $data = [

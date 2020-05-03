@@ -9,6 +9,8 @@ use App\Func\Base\Controller\BaseController;
 use App\Func\Diary\Service\DiaryEditableListEditService;
 use App\Func\Diary\Service\DiaryEditableListSearchService;
 use Slim\App;
+use Slim\Psr7\Request;
+use Slim\Psr7\Response;
 
 /**
  * 日記編集リストコントローラー。
@@ -18,9 +20,11 @@ class EditableListController extends BaseController {
     /**
      * コンストラクタ。
      * @param App $app アプリケーションオブジェクト
+     * @param Request $request HTTPリクエスト
+     * @param Response $response HTTPレスポンス
      */
-    public function __construct(App $app) {
-        parent::__construct($app);
+    public function __construct(App $app, Request $request, Response $response) {
+        parent::__construct($app, $request, $response);
     }
 
     /**

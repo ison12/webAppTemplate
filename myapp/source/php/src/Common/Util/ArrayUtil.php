@@ -10,15 +10,47 @@ class ArrayUtil {
     /**
      * クロージャーによって、マップを生成する。
      * @param array $data データ配列
-     * @param string $callback コールバック関数
+     * @param callable $callback コールバック関数
      * @return array マップ配列
      */
-    public static function convertToMap($data, $callback) {
+    public static function convertToMap(array $data, callable $callback): array {
 
-        $ret = array();
+        $ret = [];
 
         foreach ($data as $d) {
             $ret[(string) $callback($d)] = $d;
+        }
+
+        return $ret;
+    }
+
+    /**
+     * クロージャーによって、マップを生成する。
+     *
+     * $callback関数の戻り値に要素数2の配列を指定する。
+     * 0番目がキー、1番目が値。
+     *
+     * 実行例）
+     * $map = ArrayUtil::convertToMapKeyValue(
+     *         [ ['id' => '1', 'name' => 'John'],
+     *           ['id' => '2', 'name' => 'Emily'] ],
+     *         function($val) {
+     *             return [$val['id'], $val['name']];
+     *         });
+     *
+     * @param array $data データ配列
+     * @param callback $callback コールバック関数
+     * @return array マップ配列
+     */
+    public static function convertToMapKeyValue(array $data, callable $callback): array {
+
+        $ret = [];
+
+        foreach ($data as $d) {
+
+            $element = $callback($d);
+
+            $ret[(string) $element[0]] = $element[1];
         }
 
         return $ret;
@@ -31,9 +63,9 @@ class ArrayUtil {
      * @param string $callback コールバック関数
      * @return array マップ配列
      */
-    public static function convertToReferElementMap($data, $callback) {
+    public static function convertToReferElementMap(array $data, callable $callback): array {
 
-        $ret = array();
+        $ret = [];
 
         foreach ($data as &$d) {
             $ret[(string) $callback($d)] = $d;
@@ -48,9 +80,9 @@ class ArrayUtil {
      * @param string $key キー
      * @return array マップ配列
      */
-    public static function convertToMapByArrayKey($data, $key) {
+    public static function convertToMapByArrayKey(array $data, string $key): array {
 
-        $ret = array();
+        $ret = [];
 
         foreach ($data as $d) {
             $ret[($d[$key])] = $d;
@@ -65,9 +97,9 @@ class ArrayUtil {
      * @param string $key キー
      * @return array マップ配列
      */
-    public static function convertToMapByObjField($data, $key) {
+    public static function convertToMapByObjField(array $data, string $key): array {
 
-        $ret = array();
+        $ret = [];
 
         foreach ($data as $d) {
             $ret[($d->$key)] = $d;
@@ -82,9 +114,9 @@ class ArrayUtil {
      * @param string $key キー
      * @return array マップ配列
      */
-    public static function convertToMapByObjMethod($data, $key) {
+    public static function convertToMapByObjMethod(array $data, string $key): array {
 
-        $ret = array();
+        $ret = [];
 
         foreach ($data as $d) {
 
@@ -102,13 +134,13 @@ class ArrayUtil {
      * @param callable $callback コールバック関数
      * @return string 文字列表現
      */
-    public static function toString($data, $separate, $callback) {
+    public static function toString(array $data, string $separate, callable $callback): string {
 
         if (!is_array($data) && !is_object($data)) {
             return (string) $data;
         }
 
-        $ret = array();
+        $ret = [];
 
         foreach ($data as $k => $v) {
             $ret[] = $callback($k, $v);
@@ -122,7 +154,7 @@ class ArrayUtil {
      * @param array $data データ
      * @return string 文字列表現
      */
-    public static function toFlatString($data) {
+    public static function toFlatString(array $data): string {
 
         if (!is_array($data)) {
             return (string) $data;
@@ -140,13 +172,13 @@ class ArrayUtil {
      * @param array $data データ
      * @return string 文字列表現
      */
-    public static function toFlatStringFor2Dim($data) {
+    public static function toFlatStringFor2Dim(array $data): string {
 
         if (!is_array($data)) {
             return (string) $data;
         }
 
-        $ret = array();
+        $ret = [];
 
         foreach ($data as $dataChild) {
             $ret[] = self::toFlatString($dataChild);
@@ -161,7 +193,7 @@ class ArrayUtil {
      * @param int $cnt 次元数
      * @return int 次元数
      */
-    public static function depth(array $ary, $cnt = 0) {
+    public static function depth(array $ary, int $cnt = 0): int {
 
         if (!is_array($ary)) {
             return $cnt;
@@ -190,10 +222,10 @@ class ArrayUtil {
      * @param string $separate 区切り文字
      * @return string 文字列フォーマット
      */
-    public static function formatStringFromRecords($records, $separate = ' / ') {
+    public static function formatStringFromRecords(array $records, string $separate = ' / '): string {
 
         // カラム別に最大長を取得する
-        $columnsLength = array();
+        $columnsLength = [];
 
         foreach ($records as $record) {
             foreach ($record as $colName => $column) {
@@ -228,7 +260,7 @@ class ArrayUtil {
                                 return $val;
                             });
                     if ($i <= 0) {
-                        $cols = array();
+                        $cols = [];
                         $totalLength = 0;
                         foreach ($record as $k => $v) {
                             $padLen = 0;
@@ -254,18 +286,18 @@ class ArrayUtil {
      * @param array $arr 配列
      * @return mixed 配列の最初の要素
      */
-    public static function getFirstElement($arr) {
+    public static function getFirstElement(array $arr) {
         $a = array_values($arr);
         return $a[0];
     }
 
     /**
-     * 配列のソートを再帰的に実施する。
+     * 配列のキーによるソートを再帰的に実施する。
      * ソート順は、連想配列の場合は辞書順で、添え字の場合は数値順とする。
      *
      * @param array $arr 配列
      */
-    public static function sortIndexRecursive(&$arr) {
+    public static function sortIndexRecursive(array &$arr) {
 
         $isKey = false;
         if (count($arr) > 0) {
@@ -299,7 +331,8 @@ class ArrayUtil {
      * @param int $index インデックス
      * @return mixed 取得した値
      */
-    public static function getByIndex($a, $index) {
+    public static function getByIndex(array $a, int $index) {
+
         $ret = current(array_slice($a, $index, 1));
         if ($ret === false) {
             return null;

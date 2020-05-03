@@ -5,15 +5,15 @@ namespace Tests\App\Common\DB\Impl\PostgreSQL;
 use App\Common\DB\DBFactory;
 use App\Common\DB\DBRawValue;
 use Exception;
-use Tests\Common\DBBaseTest;
+use Tests\Common\PostgreSQLBaseTest;
 
 /**
  * PostgreSQLQueryInsert。
  * テストクラス。
  *
- * 
+ *
  */
-class PostgreSQLQueryInsertTest extends DBBaseTest {
+class PostgreSQLQueryInsertTest extends PostgreSQLBaseTest {
 
     /**
      * 共通処理。

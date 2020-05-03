@@ -3,14 +3,14 @@
 namespace Tests\App\Common\App;
 
 use App\Common\App\AppContext;
-use Slim\App;
+use Slim\Factory\AppFactory;
 use Tests\Common\BaseTest;
 
 /**
  * アプリケーションコンテキスト。
  * テストクラス。
  *
- * 
+ *
  */
 class AppContextTest extends BaseTest {
 
@@ -29,7 +29,7 @@ class AppContextTest extends BaseTest {
         $beforeApp = AppContext::get();
 
         try {
-            $app = new App();
+            $app = AppFactory::create();
             AppContext::set($app);
 
             // 設定したオブジェクトが正常に設定されていること

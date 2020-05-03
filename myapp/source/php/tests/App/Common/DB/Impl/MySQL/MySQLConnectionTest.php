@@ -6,15 +6,15 @@ use App\Common\DB\DBFactory;
 use App\Common\DB\Impl\MySQL\MySQLConnection;
 use App\Common\Exception\DBException;
 use PDO;
-use Tests\Common\DBBaseTest;
+use Tests\Common\MySQLBaseTest;
 
 /**
  * MySQLConnection。
  * テストクラス。
  *
- * 
+ *
  */
-class MySQLConnectionTest extends DBBaseTest {
+class MySQLConnectionTest extends MySQLBaseTest {
 
     /**
      * 共通処理。
@@ -51,9 +51,9 @@ class MySQLConnectionTest extends DBBaseTest {
         try {
             // パスワードが不正のため、接続エラー
             DBFactory::getConnection([
-                'type' => 'pgsql',
-                'connectionStr' => 'pgsql:dbname=unit_test; host=127.0.0.1; port=5432;',
-                'userId' => 'mysql',
+                'type' => 'mysql',
+                'connectionStr' => 'mysql:dbname=unit_test; host=127.0.0.1; port=3306;',
+                'userId' => 'root',
                 'password' => 'failed-password',
                 'connectTimeoutMsec' => 30 * 1000,
                 'queryTimeoutMsec' => 30 * 1000,
@@ -74,12 +74,12 @@ class MySQLConnectionTest extends DBBaseTest {
         try {
             // ポートが不正のため、接続エラー
             DBFactory::getConnection([
-                'type' => 'pgsql',
-                'connectionStr' => 'pgsql:dbname=unit_test; host=localhost; port=9999;',
-                'userId' => 'mysql',
+                'type' => 'mysql',
+                'connectionStr' => 'mysql:dbname=unit_test; host=localhost; port=9999;',
+                'userId' => 'root',
                 'password' => 'password',
-                'connectTimeoutMsec' => 30 * 1000,
-                'queryTimeoutMsec' => 30 * 1000,
+                'connectTimeoutMsec' => 3 * 1000,
+                'queryTimeoutMsec' => 3 * 1000,
             ]);
             $this->assertTrue(false);
         } catch (DBException $exc) {
@@ -178,7 +178,7 @@ class MySQLConnectionTest extends DBBaseTest {
                     $this->assertSame(12345, (int) $rec['column3']);
                     $this->assertSame(true, (bool) $rec['column4']);
                 });
-                $this->assertSame(1, count($fetchRet));
+                $this->assertSame(1, $fetchRet);
             }
 
             // queryFetchStatement

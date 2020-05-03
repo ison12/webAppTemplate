@@ -7,6 +7,8 @@ use App\Common\Session\SessionData;
 use App\Func\Base\Controller\BaseController;
 use App\Func\Login\Service\LoginService;
 use Slim\App;
+use Slim\Psr7\Request;
+use Slim\Psr7\Response;
 
 /**
  * ログインコントローラー。
@@ -14,16 +16,13 @@ use Slim\App;
 class LoginController extends BaseController {
 
     /**
-     * @var bool 認証を要するかどうかのフラグ、true：要認証、false、不要
-     */
-    protected $needAuth = false;
-
-    /**
      * コンストラクタ。
      * @param App $app アプリケーションオブジェクト
+     * @param Request $request HTTPリクエスト
+     * @param Response $response HTTPレスポンス
      */
-    public function __construct(App $app) {
-        parent::__construct($app);
+    public function __construct(App $app, Request $request, Response $response) {
+        parent::__construct($app, $request, $response);
     }
 
     /**

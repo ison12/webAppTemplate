@@ -2,17 +2,36 @@
 
 use App\Common\App\AppContext;
 use App\Common\Log\AppLogger;
+use App\Common\Shutdown\ShutdownManager;
+use DI\Container;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
-use Slim\App;
+use Slim\Factory\AppFactory;
 use Slim\Views\PhpRenderer;
 
 const PUBLIC_PATH = __DIR__ . '/../public/';
 const SRC_PATH = __DIR__ . '/';
 
+// -----------------------------------------------------------------------------
+// PHP起動時の共通処理の定義 bootstrap.php
+//
+// ここでは、PHP起動時に関する共通処理の定義したり実行する。
+// 本処理では、Webリクエストまたはバッチ起動などで呼び出されることを想定している。
+// -----------------------------------------------------------------------------
+
 /*
- * Handle ErrorException
+ * ロケール指定（php.iniやini_set関数で変更できないので、起動共通処理でロケール指定を実施する）
+ * ※basename・pathinfo関数などでUTF-8などのマルチバイト文字を取り扱う際に事前に設定が必要
+ */
+setlocale(LC_ALL, 'ja_JP.UTF-8');
+/*
+ * クラスオートローダーの読み込み
+ */
+$autoloader = require __DIR__ . '/../vendor/autoload.php';
+
+/*
+ * エラー例外をハンドリングする
  */
 set_error_handler(function ($severity, $message, $file, $line) {
     if (!(error_reporting() & $severity)) {
@@ -22,115 +41,71 @@ set_error_handler(function ($severity, $message, $file, $line) {
     throw new ErrorException($message, 0, $severity, $file, $line);
 });
 
-$GLOBALS['shutdownFunctions'] = [];
-$GLOBALS['unexpectedException'] = null;
+/*
+ * プログラム終了時に必ず呼び出されるコールバック関数を登録
+ */
+$shutdownManager = ShutdownManager::getInstance();
+$shutdownManager->regist(function($errorData) {
 
-// プログラム終了時一律でコールされる register_shutdown_function にコールバックを登録。
-register_shutdown_function(function() {
-
-    $log = AppLogger::get();
-
-    $errorData = null;
-    $ce = $GLOBALS['unexpectedException']; // 重大なエラー
-
-    if ($ce === null) {
-        $e = error_get_last();
-        if ($e !== null && (
-                $e['type'] === E_ERROR ||
-                $e['type'] === E_PARSE ||
-                $e['type'] === E_CORE_ERROR ||
-                $e['type'] === E_COMPILE_ERROR ||
-                $e['type'] === E_USER_ERROR)) {
-            // error_get_last()の返却値を見て、 「重大なエラーなら」 処理する。
-            // 重大なエラーでなければ、set_error_handler 例外変換が動くはず。
-            // これがないと、ハンドリングされていないエラーでは「白い画面」が出る。
-            $ce = $e;
+    if ($errorData !== null) {
+        // エラー時にログ出力する
+        $log = AppLogger::get();
+        if ($log->isErrorEnabled()) {
+            $log->error('Unexpected error occurred in shutdown function.', ['exception' => $errorData]);
         }
-    }
-
-    $errorData = $ce;
-
-    if ($log !== null && $log->isErrorEnabled() && $errorData !== null) {
-
-        $log->error('unexpected error occurred.', ['exception' => $errorData]);
-    }
-
-    // 登録されたシャットダウン関数を順次コールする
-    $shutdownFunctions = $GLOBALS['shutdownFunctions'];
-    foreach (array_reverse($shutdownFunctions) as $shutdownFunction) {
-        $shutdownFunction($errorData);
     }
 });
 
 /*
- * Load the autoloader
- */
-$autoloader = require __DIR__ . '/../vendor/autoload.php';
-
-/*
- * Start the session
+ * セッションを有効にする
  */
 session_start();
 header_remove('Cache-Control');
 
 /*
- * Instantiate the app
+ * Slimアプリケーションオブジェクトの初期化
  */
-if (!isset($settingsPath)) {
-    $settingsSuffix = filter_input(INPUT_ENV, '__ENV') ? '.' . filter_input(INPUT_ENV, '__ENV') : '';
-    $settingsPath = __DIR__ . '/../config/appConfig' . $settingsSuffix . '.php';
+if (!isset($configPath)) {
+    $configSuffix = filter_input(INPUT_ENV, '__ENV') ? '.' . filter_input(INPUT_ENV, '__ENV') : '';
+    $configPath = __DIR__ . '/../config/appConfig' . $configSuffix . '.php';
 }
 
-$settings = require $settingsPath;
-$app = new App($settings);
+$config = require $configPath;
+
+$container = new Container();
+$container->set('config', $config);
+
+$app = AppFactory::createFromContainer($container);
+$app->setBasePath($config['baseUri'] ?? '');
 
 /*
- * Set up dependencies
+ * DIコンテナの初期化
  */
 $container = $app->getContainer();
 
-// View Renderer
-$container['renderer'] = function ($c) {
-    $settings = $c->get('settings')['renderer'];
-    return new PhpRenderer($settings['template_path']);
-};
-
-// Override the default Not Found Handler
-$container['notFoundHandler'] = function ($container) {
-    return function ($request, $response) use ($container) {
-
-        $renderer = $container->renderer;
-
-        $uri = $request->getUri();
-        $url = $uri->getBasePath() . '/' . $uri->getPath();
-        if ($request->isXhr()) {
-            $page = json_encode(['url' => $url, 'message' => "The requested URL $url was not found on this server."]);
-        } else {
-            $page = $renderer->fetch('/View/Error/404.php', ['url' => $url]);
-        }
-
-        return $container['response']
-                        ->withStatus(404)
-                        ->withHeader('Content-Type', 'text/html')
-                        ->write($page);
-    };
-};
+// PHP View Renderer
+$container->set('renderer', function (/* ContainerInterface $c */) {
+    return new PhpRenderer(SRC_PATH);
+});
 
 // monolog
-$container['logger'] = function ($c) {
-    $settings = $c->get('settings')['logger'];
-    $logger = new Logger($settings['name']);
+$container->set('logger', function ($c) {
+    $loggerConfig = $c->get('config')['logger'];
+    $logger = new Logger($loggerConfig['name']);
     $logger->pushProcessor(new UidProcessor());
 
-    $handler = new RotatingFileHandler($settings['path'], 0, $settings['level'], true, 0664);
+    $handler = new RotatingFileHandler($loggerConfig['path'], 0, $loggerConfig['level'], true, 0664);
     $handler->setFilenameFormat('{date}-{filename}', 'Y/m/d');
     $logger->pushHandler($handler);
 
     //$logger->pushHandler(new Monolog\Handler\StreamHandler($settings['path'], $settings['level']));
 
     return $logger;
-};
+});
 
+/*
+ * アプリケーションオブジェクトとロガーを設定する
+ */
 AppContext::set($app);
 AppLogger::set($container->get('logger'));
 
