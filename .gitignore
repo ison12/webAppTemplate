@@ -8,3 +8,4 @@ myapp/source/php/log
 myapp/source/php/cache
 myapp/document/01_DB/10_SCRIPT/data/INIT_DATA.*.xlsx
 myapp/source/php/tests/log
+myapp/source/php/public/dist/*.bundle.js

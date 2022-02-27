@@ -38,7 +38,7 @@ module.exports = merge(common.settings, {
                     '!' + prefixUri + '/dist/**'
                 ],
                 // Apache Webサーバーに転送する
-                target: 'http://localhost:5555'
+                target: 'http://localhost:10180/'
             }
         ]
     }

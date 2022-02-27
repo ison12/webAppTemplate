@@ -39,7 +39,7 @@ return [
     'db' => [
         'default' => [
             'type' => 'mysql',
-            'connectionStr' => 'mysql:host=127.0.0.1;dbname=myapp;',
+            'connectionStr' => 'mysql:host=myapp_mysql;dbname=myapp;port=3306;',
             'userId' => 'myappapp',
             'password' => 'myappapp',
             'connectTimeoutMsec' => 30 * 1000,

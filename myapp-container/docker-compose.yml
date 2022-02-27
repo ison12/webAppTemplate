@@ -1,0 +1,74 @@
+version: "3"
+
+services:
+  mysql:
+    container_name: $MYSQL_HOST
+    build: mysql/
+    ports:
+      - "$MYSQL_PORT_EXTERNAL:$MYSQL_PORT"
+    expose:
+      - "$MYSQL_PORT_EXTERNAL"
+    # How to fix "mbind: Operation not permitted" in mysql error log
+    # https://stackoverflow.com/questions/55559386/how-to-fix-mbind-operation-not-permitted-in-mysql-error-log
+    cap_add:
+      - SYS_NICE
+    environment:
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+      MYSQL_DATABASE: $MYSQL_DATABASE
+      MYSQL_USER: $MYSQL_USER_USER
+      MYSQL_PASSWORD: $MYSQL_USER_PASSWORD
+      TZ: Asia/Tokyo
+    volumes:
+      - type: bind
+        source: "./mysql/init"
+        target: "/docker-entrypoint-initdb.d"
+      - type: volume
+        source: "mysql-data"
+        target: "/var/lib/mysql"
+
+  php:
+    container_name: $PHP_HOST
+    build: php/
+    ports:
+      - "$PHP_PORT_EXTERNAL:$PHP_PORT"
+      - "$PHP_XDEBUG_PORT_EXTERNAL:$PHP_XDEBUG_PORT"
+    expose:
+      - "$PHP_PORT_EXTERNAL"
+      - "$PHP_XDEBUG_PORT_EXTERNAL"
+    volumes:
+      - type: bind
+        source: "$APP_MODULE_SRC_DIR"
+        target: "$APP_MODULE_DES_DIR"
+    depends_on:
+      - "mysql"
+
+  apache:
+    container_name: $APACHE_HOST
+    build: apache/
+    ports:
+      - "$APACHE_PORT_EXTERNAL:$APACHE_PORT"
+      - "$APACHE_SSL_PORT_EXTERNAL:$APACHE_SSL_PORT"
+    expose:
+      - "$APACHE_PORT_EXTERNAL"
+      - "$APACHE_SSL_PORT_EXTERNAL"
+    volumes:
+      - type: bind
+        source: "$APP_MODULE_SRC_DIR"
+        target: "$APP_MODULE_DES_DIR"
+      - type: bind
+        source: "./apache/content"
+        target: "/usr/local/apache2/htdocs"
+    depends_on:
+      - "php"
+
+  phpmyadmin:
+    image: phpmyadmin
+    environment:
+      PMA_HOST: "myapp_mysql"
+    ports:
+      - "$PHPMYADMIN_PORT_EXTERNAL:$PHPMYADMIN_PORT"
+    depends_on:
+      - "mysql"
+
+volumes:
+  mysql-data:
