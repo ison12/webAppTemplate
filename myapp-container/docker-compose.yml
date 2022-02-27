@@ -31,10 +31,10 @@ services:
     build: php/
     ports:
       - "$PHP_PORT_EXTERNAL:$PHP_PORT"
-      - "$PHP_XDEBUG_PORT_EXTERNAL:$PHP_XDEBUG_PORT"
     expose:
       - "$PHP_PORT_EXTERNAL"
-      - "$PHP_XDEBUG_PORT_EXTERNAL"
+    environment:
+      - ENVIRONMENT
     volumes:
       - type: bind
         source: "$APP_MODULE_SRC_DIR"
@@ -51,6 +51,8 @@ services:
     expose:
       - "$APACHE_PORT_EXTERNAL"
       - "$APACHE_SSL_PORT_EXTERNAL"
+    environment:
+      - ENVIRONMENT
     volumes:
       - type: bind
         source: "$APP_MODULE_SRC_DIR"
